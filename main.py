@@ -23,6 +23,8 @@ def main():
     '''
     # Pygameの初期化
     pg.init()
+    # イベント実行フラグ
+    running = True
 
     # 画面作成
     win = pg.display.set_mode((WIDTH, HEIGHT))
@@ -38,9 +40,10 @@ def main():
     group.add(mario)
 
     # イベントループ
-    while True:
+    while running:
       for e in pg.event.get():
         if e.type == pg.QUIT:
+          running = False
           pg.quit()
           sys.exit()
 
