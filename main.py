@@ -27,6 +27,15 @@ class Kuriboh(pg.sprite.Sprite):
     self.image = pg.image.load('images/kuriboh_001.png')
     self.rect = pg.Rect(180, 200, 20, 20)
 
+class Nokonoko(pg.sprite.Sprite):
+  ''' ノコノコのクラス
+  '''
+  def __init__(self):
+    pg.sprite.Sprite.__init__(self)
+
+    self.image = pg.image.load('images/nokonoko_001.png')
+    self.rect = pg.Rect(200, 200, 20, 20)
+
 def main():
     ''' メイン関数
     '''
@@ -47,10 +56,14 @@ def main():
     mario = Mario()
     # クリボークラスを構築
     kuriboh = Kuriboh()
+    # ノコノコクラスを構築
+    nokonoko = Nokonoko()
     # マリオをグループに追加
     group.add(mario)
     # クリボーをグループに追加
     group.add(kuriboh)
+    # ノコノコをグループに追加
+    group.add(nokonoko)
 
 
     # イベントループ
