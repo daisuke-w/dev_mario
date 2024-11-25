@@ -18,6 +18,20 @@ class Mario(pg.sprite.Sprite):
     self.image = pg.image.load('images/mario_001.png')
     self.rect = pg.Rect(150, 200, 20, 20)
 
+  def __right(self):
+    self.rect.x += 5
+  
+  def __left(self):
+    self.rect.x -= 5
+
+  def update(self):
+    # キーボードの状態を取得
+    keys = pg.key.get_pressed()
+    if keys[pg.K_RIGHT]:
+      self.__right()
+    if keys[pg.K_LEFT]:
+      self.__left()
+
 class Kuriboh(pg.sprite.Sprite):
   ''' クリボーのクラス
   '''
@@ -65,7 +79,6 @@ def main():
     # ノコノコをグループに追加
     group.add(nokonoko)
 
-
     # イベントループ
     while running:
       for e in pg.event.get():
@@ -74,17 +87,20 @@ def main():
           pg.quit()
           sys.exit()
 
-        # 背景を水色に塗りつぶす
-        win.fill((135, 206, 235))
+      # 背景を水色に塗りつぶす
+      win.fill((135, 206, 235))
 
-        # グループを更新
-        group.update()
+      # グループを更新
+      group.update()
 
-        # グループを描画
-        group.draw(win)
+      # グループを描画
+      group.draw(win)
 
-        # 画面を更新
-        pg.display.flip()
+      # 画面を更新
+      pg.display.flip()
+
+      # フレームレートを設定
+      clock.tick(30)
 
 if __name__ == '__main__':
     main()
