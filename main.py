@@ -13,14 +13,25 @@ class Mario(pg.sprite.Sprite):
     ''' マリオのクラス '''
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.image.load('images/mario_001.png')
+
+        # 左右の向きフラグ
+        self.__isLeft = False
+
+        # マリオ画像読み込み
+        self.__imgs = [
+          pg.image.load('images/mario_001.png')
+        ]
+
+        self.image = self.__imgs[0]
         self.rect = pg.Rect(150, 200, 20, 20)
 
     def __right(self):
         self.rect.x += 5
+        self.__isLeft = False
 
     def __left(self):
         self.rect.x -= 5
+        self.__isLeft = True
 
     def update(self):
         # キーボードの状態を取得
@@ -29,6 +40,8 @@ class Mario(pg.sprite.Sprite):
             self.__right()
         if keys[pg.K_LEFT]:
             self.__left()
+
+        self.image = pg.transform.flip(self.__imgs[0], self.__isLeft, False)
 
 class Kuriboh(pg.sprite.Sprite):
     ''' クリボーのクラス '''
