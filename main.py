@@ -19,6 +19,10 @@ class Mario(pg.sprite.Sprite):
         self.__isLeft = False
         # 歩くインデックス
         self.__walkIndex = 0
+        # Y軸方向移動距離
+        self.__vy = 0
+        # マリオが地面にいるかどうか
+        self.__on_ground = True
 
         # マリオ画像読み込み
         self.__imgs = [
@@ -39,6 +43,11 @@ class Mario(pg.sprite.Sprite):
         self.rect.x -= 5
         self.__isLeft = True
         self.__walkIndex += 1
+    
+    def __jump(self):
+        if self.__on_ground:
+            self.__vy -= 10
+            self.__on_ground = False
 
     def update(self):
         # キーボードの状態を取得
@@ -47,6 +56,16 @@ class Mario(pg.sprite.Sprite):
             self.__right()
         if keys[pg.K_LEFT]:
             self.__left()
+        if keys[pg.K_SPACE]:
+            self.__jump()
+
+        # Y軸方向に移動
+        if not self.__on_ground:
+          self.rect.y += self.__vy
+          self.__vy += 1
+          if self.rect.y > 200:
+              self.rect.y = 200
+              self.__on_ground = True
 
         self.image = pg.transform.flip(
           self.__imgs[self.WALK_ANIME_INDEX[self.__walkIndex % 9]],
