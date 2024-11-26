@@ -11,15 +11,20 @@ TILE_Y = 14
 
 class Mario(pg.sprite.Sprite):
     ''' マリオのクラス '''
+    WALK_ANIME_INDEX = [0, 0, 0, 1, 1, 1, 2, 2, 2]
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
 
         # 左右の向きフラグ
         self.__isLeft = False
+        # 歩くインデックス
+        self.__walkIndex = 0
 
         # マリオ画像読み込み
         self.__imgs = [
-          pg.image.load('images/mario_001.png')
+          pg.image.load('images/mario_001.png'),
+          pg.image.load('images/mario_002.png'),
+          pg.image.load('images/mario_003.png')
         ]
 
         self.image = self.__imgs[0]
@@ -28,10 +33,12 @@ class Mario(pg.sprite.Sprite):
     def __right(self):
         self.rect.x += 5
         self.__isLeft = False
+        self.__walkIndex += 1
 
     def __left(self):
         self.rect.x -= 5
         self.__isLeft = True
+        self.__walkIndex += 1
 
     def update(self):
         # キーボードの状態を取得
@@ -41,7 +48,10 @@ class Mario(pg.sprite.Sprite):
         if keys[pg.K_LEFT]:
             self.__left()
 
-        self.image = pg.transform.flip(self.__imgs[0], self.__isLeft, False)
+        self.image = pg.transform.flip(
+          self.__imgs[self.WALK_ANIME_INDEX[self.__walkIndex % 9]],
+          self.__isLeft,
+          False)
 
 class Kuriboh(pg.sprite.Sprite):
     ''' クリボーのクラス '''
