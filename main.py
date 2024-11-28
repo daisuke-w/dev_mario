@@ -83,12 +83,29 @@ class Kuriboh(pg.sprite.Sprite):
     ''' クリボーのクラス '''
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.image.load('images/kuriboh_001.png')
+
+        # 画像をリストで保持
+        self.__imgs = [
+            pg.image.load('images/kuriboh_001.png'),
+            pg.image.load('images/kuriboh_002.png')
+        ]
+
+        self.image = self.__imgs[0]
         self.rect = pg.Rect(180, 200, 20, 20)
+
         # 横方向の速度
         self.__vx = 2
+        # フレームカウンター
+        self.__frame_counter = 0
 
     def update(self):
+        # フレームカウンターを増加
+        self.__frame_counter += 1
+
+        # 一定フレームごとに画像を切り替える
+        if self.__frame_counter % 10 == 0:
+            self.image = self.__imgs[self.__frame_counter // 10 % 2]
+
         # X方向に移動
         self.rect.x += self.__vx
 
@@ -96,7 +113,6 @@ class Kuriboh(pg.sprite.Sprite):
         if self.rect.x <= 0 or self.rect.x >= WIDTH - self.rect.width:
             # 方向を反転
             self.__vx = -self.__vx
-
 
 class Nokonoko(pg.sprite.Sprite):
     ''' ノコノコのクラス '''
