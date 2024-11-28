@@ -28,7 +28,8 @@ class Mario(pg.sprite.Sprite):
         self.__imgs = [
           pg.image.load('images/mario_001.png'),
           pg.image.load('images/mario_002.png'),
-          pg.image.load('images/mario_003.png')
+          pg.image.load('images/mario_003.png'),
+          pg.image.load('images/mario_004.png')
         ]
 
         self.image = self.__imgs[0]
@@ -66,11 +67,17 @@ class Mario(pg.sprite.Sprite):
           if self.rect.y > 200:
               self.rect.y = 200
               self.__on_ground = True
-
-        self.image = pg.transform.flip(
-          self.__imgs[self.WALK_ANIME_INDEX[self.__walkIndex % 9]],
-          self.__isLeft,
-          False)
+        
+        # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
+        if not self.__on_ground:
+            # ジャンプ中の画像
+            self.image = pg.transform.flip(self.__imgs[3], self.__isLeft, False)
+        else:
+            # 歩行アニメーションの画像
+            self.image = pg.transform.flip(
+                self.__imgs[self.WALK_ANIME_INDEX[self.__walkIndex % 9]],
+                self.__isLeft,
+                False)
 
 class Kuriboh(pg.sprite.Sprite):
     ''' クリボーのクラス '''
