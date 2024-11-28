@@ -85,6 +85,18 @@ class Kuriboh(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.image.load('images/kuriboh_001.png')
         self.rect = pg.Rect(180, 200, 20, 20)
+        # 横方向の速度
+        self.__vx = 2
+
+    def update(self):
+        # X方向に移動
+        self.rect.x += self.__vx
+
+        # 画面端で反転
+        if self.rect.x <= 0 or self.rect.x >= WIDTH - self.rect.width:
+            # 方向を反転
+            self.__vx = -self.__vx
+
 
 class Nokonoko(pg.sprite.Sprite):
     ''' ノコノコのクラス '''
