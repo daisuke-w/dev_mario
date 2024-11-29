@@ -19,6 +19,8 @@ class Mario(pg.sprite.Sprite):
         self.__isLeft = False
         # 歩くインデックス
         self.__walkIndex = 0
+        # 初期ジャンプ速度
+        self.__jump_speed = -10
         # Y軸方向移動距離
         self.__vy = 0
         # マリオが地面にいるかどうか
@@ -47,7 +49,8 @@ class Mario(pg.sprite.Sprite):
     
     def __jump(self):
         if self.__on_ground:
-            self.__vy -= 10
+            # ジャンプ速度をリセット
+            self.__vy = self.__jump_speed
             self.__on_ground = False
 
     def update(self):
