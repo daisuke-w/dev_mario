@@ -141,18 +141,23 @@ class Nokonoko(pg.sprite.Sprite):
         # X方向に移動
         self.rect.x += self.__vx
 
-        # 一定フレームごとにアニメーション
-        if self.__frame_counter % 10 == 0:
-            current_img = self.__frame_counter // 10 % 2
-            # 向きに応じて画像を反転して設定
-            self.image = pg.transform.flip(self.__imgs[current_img], not self.__isLeft, False)
-
         # 画面端で反転
         if self.rect.x <= 0 or self.rect.x >= WIDTH - self.rect.width:
             # 方向を反転
             self.__vx = -self.__vx
-            # 左右の向きを切り替える
             self.__isLeft = not self.__isLeft
+
+            # 即座に反転した画像を設定
+            current_img = self.__frame_counter // 10 % 2
+            self.image = pg.transform.flip(self.__imgs[current_img], not self.__isLeft, False)
+
+            # 反転後すぐに処理を終了する
+            return
+
+        # 一定フレームごとにアニメーション
+        if self.__frame_counter % 10 == 0:
+            current_img = self.__frame_counter // 10 % 2
+            self.image = pg.transform.flip(self.__imgs[current_img], not self.__isLeft, False)
 
 def main():
     ''' メイン関数 '''
