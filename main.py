@@ -118,20 +118,41 @@ class Nokonoko(pg.sprite.Sprite):
     ''' ノコノコのクラス '''
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.image.load('images/nokonoko_001.png')
+
+        # 画像をリストで保持
+        self.__imgs = [
+            pg.image.load('images/nokonoko_001.png'),
+            pg.image.load('images/nokonoko_002.png')
+        ]
+
+        self.image = self.__imgs[0]
         self.rect = pg.Rect(200, 200, 20, 20)
 
+        # 左右フラグ
+        self.__isLeft = True
         # 横方向の速度
-        self.__vx = 2
+        self.__vx = -2
+        # フレームカウンター
+        self.__frame_counter = 0
 
     def update(self):
+        # フレームカウンターを増加
+        self.__frame_counter += 1
         # X方向に移動
         self.rect.x += self.__vx
+
+        # 一定フレームごとにアニメーション
+        if self.__frame_counter % 10 == 0:
+            current_img = self.__frame_counter // 10 % 2
+            # 向きに応じて画像を反転して設定
+            self.image = pg.transform.flip(self.__imgs[current_img], not self.__isLeft, False)
 
         # 画面端で反転
         if self.rect.x <= 0 or self.rect.x >= WIDTH - self.rect.width:
             # 方向を反転
             self.__vx = -self.__vx
+            # 左右の向きを切り替える
+            self.__isLeft = not self.__isLeft
 
 def main():
     ''' メイン関数 '''
