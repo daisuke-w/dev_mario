@@ -60,6 +60,9 @@ class Mario(pg.sprite.Sprite):
         self.__game_over = True
         self.image = self.__imgs[4]
 
+    def is_falling(self):
+        return self.__vy > 0
+
     def update(self):
         # Game Over時は動かない
         if self.__game_over:
@@ -111,8 +114,20 @@ class Kuriboh(pg.sprite.Sprite):
         self.__vx = 2
         # フレームカウンター
         self.__frame_counter = 0
+        # 踏まれたかどうか
+        self.__stomped = False
+
+    def is_stomped(self):
+        return self.__stomped
+
+    def stomp(self):
+        self.__stomped = True
 
     def update(self):
+        # 踏まれたら動かない
+        if self.__stomped:
+            return
+
         # フレームカウンターを増加
         self.__frame_counter += 1
 
@@ -206,7 +221,12 @@ def main():
 
         # 衝突判定
         if pg.sprite.collide_rect(mario, kuriboh):
-            mario.set_game_over()
+            if not kuriboh.is_stomped():
+                if mario.is_falling():
+                    kuriboh.stomp()
+                else:
+                    mario.set_game_over()
+
         if pg.sprite.collide_rect(mario, nokonoko):
             mario.set_game_over()
 
