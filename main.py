@@ -238,7 +238,8 @@ def main():
         # クリボー衝突判定
         if pg.sprite.collide_rect(mario, kuriboh):
             if not kuriboh.is_stomped():
-                if mario.is_falling():
+                # マリオの底辺がクリボーの上辺に触れているかを確認
+                if mario.is_falling() and mario.rect.bottom <= kuriboh.rect.top + 5:
                     kuriboh.stomp()
                 else:
                     mario.set_game_over()
@@ -246,7 +247,8 @@ def main():
         # ノコノコ衝突判定
         if pg.sprite.collide_rect(mario, nokonoko):
             if not nokonoko.is_stomped():
-                if mario.is_falling():
+                # マリオの底辺がノコノコの上辺に触れているかを確認
+                if mario.is_falling() and mario.rect.bottom <= nokonoko.rect.top + 5:
                     nokonoko.stomp()
                 else:
                     mario.set_game_over()
