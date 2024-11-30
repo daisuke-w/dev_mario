@@ -104,7 +104,8 @@ class Kuriboh(pg.sprite.Sprite):
         # 画像をリストで保持
         self.__imgs = [
             pg.image.load('images/kuriboh_001.png'),
-            pg.image.load('images/kuriboh_002.png')
+            pg.image.load('images/kuriboh_002.png'),
+            pg.image.load('images/kuriboh_003.png')
         ]
 
         self.image = self.__imgs[0]
@@ -122,6 +123,7 @@ class Kuriboh(pg.sprite.Sprite):
 
     def stomp(self):
         self.__stomped = True
+        self.image = self.__imgs[2]
 
     def update(self):
         # 踏まれたら動かない
