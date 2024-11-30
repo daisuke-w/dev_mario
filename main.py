@@ -153,7 +153,8 @@ class Nokonoko(pg.sprite.Sprite):
         # 画像をリストで保持
         self.__imgs = [
             pg.image.load('images/nokonoko_001.png'),
-            pg.image.load('images/nokonoko_002.png')
+            pg.image.load('images/nokonoko_002.png'),
+            pg.image.load('images/nokonoko_003.png')
         ]
 
         self.image = self.__imgs[0]
@@ -165,8 +166,21 @@ class Nokonoko(pg.sprite.Sprite):
         self.__vx = -2
         # フレームカウンター
         self.__frame_counter = 0
+        # 踏まれたかどうか
+        self.__stomped = False
+
+    def is_stomped(self):
+        return self.__stomped
+
+    def stomp(self):
+        self.__stomped = True
+        self.image = self.__imgs[2]
 
     def update(self):
+        # 踏まれたら動かない
+        if self.__stomped:
+            return
+
         # フレームカウンターを増加
         self.__frame_counter += 1
         # X方向に移動
@@ -221,7 +235,7 @@ def main():
         # 背景を水色に塗りつぶす
         win.fill((135, 206, 235))
 
-        # 衝突判定
+        # クリボー衝突判定
         if pg.sprite.collide_rect(mario, kuriboh):
             if not kuriboh.is_stomped():
                 if mario.is_falling():
@@ -229,8 +243,13 @@ def main():
                 else:
                     mario.set_game_over()
 
+        # ノコノコ衝突判定
         if pg.sprite.collide_rect(mario, nokonoko):
-            mario.set_game_over()
+            if not nokonoko.is_stomped():
+                if mario.is_falling():
+                    nokonoko.stomp()
+                else:
+                    mario.set_game_over()
 
         # グループの更新
         group.update()
