@@ -33,7 +33,8 @@ class Mario(pg.sprite.Sprite):
           pg.image.load('images/mario_001.png'),
           pg.image.load('images/mario_002.png'),
           pg.image.load('images/mario_003.png'),
-          pg.image.load('images/mario_004.png')
+          pg.image.load('images/mario_004.png'),
+          pg.image.load('images/mario_005.png')
         ]
 
         self.image = self.__imgs[0]
@@ -57,6 +58,7 @@ class Mario(pg.sprite.Sprite):
 
     def set_game_over(self):
         self.__game_over = True
+        self.image = self.__imgs[4]
 
     def update(self):
         # Game Over時は動かない
