@@ -25,6 +25,8 @@ class Mario(pg.sprite.Sprite):
         self.__vy = 0
         # マリオが地面にいるかどうか
         self.__on_ground = True
+        # Game Overフラグ
+        self.__game_over = False
 
         # マリオ画像読み込み
         self.__imgs = [
@@ -53,7 +55,14 @@ class Mario(pg.sprite.Sprite):
             self.__vy = self.__jump_speed
             self.__on_ground = False
 
+    def set_game_over(self):
+        self.__game_over = True
+
     def update(self):
+        # Game Over時は動かない
+        if self.__game_over:
+            return
+
         # キーボードの状態を取得
         keys = pg.key.get_pressed()
         if keys[pg.K_RIGHT]:
@@ -192,6 +201,10 @@ def main():
 
         # 背景を水色に塗りつぶす
         win.fill((135, 206, 235))
+
+        # 衝突判定
+        if pg.sprite.collide_rect(mario, kuriboh):
+            mario.set_game_over()
 
         # グループの更新
         group.update()
