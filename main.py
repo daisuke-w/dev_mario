@@ -96,6 +96,7 @@ class Mario(pg.sprite.Sprite):
                 self.__isLeft,
                 False)
 
+
 class Kuriboh(pg.sprite.Sprite):
     ''' クリボーのクラス '''
     def __init__(self):
@@ -144,6 +145,7 @@ class Kuriboh(pg.sprite.Sprite):
         if self.rect.x <= 0 or self.rect.x >= WIDTH - self.rect.width:
             # 方向を反転
             self.__vx = -self.__vx
+
 
 class Nokonoko(pg.sprite.Sprite):
     ''' ノコノコのクラス '''
@@ -203,6 +205,7 @@ class Nokonoko(pg.sprite.Sprite):
         if self.__frame_counter % 10 == 0:
             current_img = self.__frame_counter // 10 % 2
             self.image = pg.transform.flip(self.__imgs[current_img], not self.__isLeft, False)
+
 
 def main():
     ''' メイン関数 '''
@@ -267,6 +270,7 @@ def main():
 
     pg.quit()
     sys.exit()
+
 
 if __name__ == '__main__':
     main()
