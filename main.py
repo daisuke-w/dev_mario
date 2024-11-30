@@ -205,6 +205,8 @@ def main():
         # 衝突判定
         if pg.sprite.collide_rect(mario, kuriboh):
             mario.set_game_over()
+        if pg.sprite.collide_rect(mario, nokonoko):
+            mario.set_game_over()
 
         # グループの更新
         group.update()
