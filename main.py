@@ -118,6 +118,10 @@ class Kuriboh(pg.sprite.Sprite):
         self.__frame_counter = 0
         # 踏まれたかどうか
         self.__stomped = False
+        # 踏まれた後の経過フレーム
+        self.__stomped_timer = 0
+        # 踏まれた後消えるまでの時間（フレーム数）
+        self.__disappear_delay = 15
 
     def is_stomped(self):
         return self.__stomped
@@ -130,8 +134,12 @@ class Kuriboh(pg.sprite.Sprite):
         self.__vx *= -1
 
     def update(self):
-        # 踏まれたら動かない
+        # 踏まれた後の処理
         if self.__stomped:
+            self.__stomped_timer += 1
+            if self.__stomped_timer >= self.__disappear_delay:
+                # 一定時間経過後に削除
+                self.kill()
             return
 
         # フレームカウンターを増加
@@ -294,7 +302,7 @@ def main():
         # 画面を更新
         pg.display.flip()
 
-        # フレームレートを設定
+        # フレームレートを設定(1秒間に30フレーム)
         clock.tick(30)
 
     pg.quit()
