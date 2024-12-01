@@ -25,17 +25,20 @@ class Mario(pg.sprite.Sprite):
         self.__vy = 0
         # マリオが地面にいるかどうか
         self.__on_ground = True
+        # Game Overフラグ
+        self.__game_over = False
 
         # マリオ画像読み込み
         self.__imgs = [
           pg.image.load('images/mario_001.png'),
           pg.image.load('images/mario_002.png'),
           pg.image.load('images/mario_003.png'),
-          pg.image.load('images/mario_004.png')
+          pg.image.load('images/mario_004.png'),
+          pg.image.load('images/mario_005.png')
         ]
 
         self.image = self.__imgs[0]
-        self.rect = pg.Rect(150, 200, 20, 20)
+        self.rect = pg.Rect(50, 200, 20, 20)
 
     def __right(self):
         self.rect.x += 5
@@ -53,7 +56,18 @@ class Mario(pg.sprite.Sprite):
             self.__vy = self.__jump_speed
             self.__on_ground = False
 
+    def set_game_over(self):
+        self.__game_over = True
+        self.image = self.__imgs[4]
+
+    def is_falling(self):
+        return self.__vy > 0
+
     def update(self):
+        # Game Over時は動かない
+        if self.__game_over:
+            return
+
         # キーボードの状態を取得
         keys = pg.key.get_pressed()
         if keys[pg.K_RIGHT]:
@@ -82,6 +96,7 @@ class Mario(pg.sprite.Sprite):
                 self.__isLeft,
                 False)
 
+
 class Kuriboh(pg.sprite.Sprite):
     ''' クリボーのクラス '''
     def __init__(self):
@@ -90,7 +105,8 @@ class Kuriboh(pg.sprite.Sprite):
         # 画像をリストで保持
         self.__imgs = [
             pg.image.load('images/kuriboh_001.png'),
-            pg.image.load('images/kuriboh_002.png')
+            pg.image.load('images/kuriboh_002.png'),
+            pg.image.load('images/kuriboh_003.png')
         ]
 
         self.image = self.__imgs[0]
@@ -100,8 +116,32 @@ class Kuriboh(pg.sprite.Sprite):
         self.__vx = 2
         # フレームカウンター
         self.__frame_counter = 0
+        # 踏まれたかどうか
+        self.__stomped = False
+        # 踏まれた後の経過フレーム
+        self.__stomped_timer = 0
+        # 踏まれた後消えるまでの時間（フレーム数）
+        self.__disappear_delay = 15
+
+    def is_stomped(self):
+        return self.__stomped
+
+    def stomp(self):
+        self.__stomped = True
+        self.image = self.__imgs[2]
+
+    def reverse_direction(self):
+        self.__vx *= -1
 
     def update(self):
+        # 踏まれた後の処理
+        if self.__stomped:
+            self.__stomped_timer += 1
+            if self.__stomped_timer >= self.__disappear_delay:
+                # 一定時間経過後に削除
+                self.kill()
+            return
+
         # フレームカウンターを増加
         self.__frame_counter += 1
 
@@ -117,6 +157,7 @@ class Kuriboh(pg.sprite.Sprite):
             # 方向を反転
             self.__vx = -self.__vx
 
+
 class Nokonoko(pg.sprite.Sprite):
     ''' ノコノコのクラス '''
     def __init__(self):
@@ -125,7 +166,8 @@ class Nokonoko(pg.sprite.Sprite):
         # 画像をリストで保持
         self.__imgs = [
             pg.image.load('images/nokonoko_001.png'),
-            pg.image.load('images/nokonoko_002.png')
+            pg.image.load('images/nokonoko_002.png'),
+            pg.image.load('images/nokonoko_003.png')
         ]
 
         self.image = self.__imgs[0]
@@ -137,8 +179,39 @@ class Nokonoko(pg.sprite.Sprite):
         self.__vx = -2
         # フレームカウンター
         self.__frame_counter = 0
+        # 踏まれたかどうか
+        self.__stomped = False
+        # 踏まれた後の経過フレーム
+        self.__stomped_timer = 0
+        # 踏まれた後消えるまでの時間（フレーム数）
+        self.__disappear_delay = 15
+
+    def is_stomped(self):
+        return self.__stomped
+
+    def stomp(self):
+        self.__stomped = True
+        self.image = self.__imgs[2]
+
+    def reverse_direction(self):
+        """ 進行方向と画像の向きを反転する"""
+        self.__vx *= -1
+        # 左右フラグを反転
+        self.__isLeft = not self.__isLeft
+        # 現在の画像フレームに基づいて画像を更新
+        current_img = self.__frame_counter // 10 % 2
+        self.image = pg.transform.flip(self.__imgs[current_img], not self.__isLeft, False)
 
     def update(self):
+        # 踏まれた後の処理
+        # TODO ノコノコも一旦消える形にするが将来的には甲羅を蹴れるようにする
+        if self.__stomped:
+            self.__stomped_timer += 1
+            if self.__stomped_timer >= self.__disappear_delay:
+                # 一定時間経過後に削除
+                self.kill()
+            return
+
         # フレームカウンターを増加
         self.__frame_counter += 1
         # X方向に移動
@@ -162,6 +235,7 @@ class Nokonoko(pg.sprite.Sprite):
             current_img = self.__frame_counter // 10 % 2
             self.image = pg.transform.flip(self.__imgs[current_img], not self.__isLeft, False)
 
+
 def main():
     ''' メイン関数 '''
     # Pygameの初期化
@@ -177,11 +251,14 @@ def main():
 
     # スプライトグループを定義
     group = pg.sprite.RenderUpdates()
+    # 敵キャラクターグループを定義
+    enemies = pg.sprite.Group()
     # 各スプライトを構築してグループに追加
     mario = Mario()
     kuriboh = Kuriboh()
     nokonoko = Nokonoko()
     group.add(mario, kuriboh, nokonoko)
+    enemies.add(kuriboh, nokonoko)
 
     # イベントループ
     while running:
@@ -193,6 +270,38 @@ def main():
         # 背景を水色に塗りつぶす
         win.fill((135, 206, 235))
 
+        # クリボー衝突判定
+        if pg.sprite.collide_rect(mario, kuriboh):
+            if not kuriboh.is_stomped():
+                # マリオの底辺がクリボーの上辺に触れているかを確認
+                if mario.is_falling() and mario.rect.bottom <= kuriboh.rect.top + 5:
+                    kuriboh.stomp()
+                else:
+                    mario.set_game_over()
+
+        # ノコノコ衝突判定
+        if pg.sprite.collide_rect(mario, nokonoko):
+            if not nokonoko.is_stomped():
+                # マリオの底辺がノコノコの上辺に触れているかを確認
+                if mario.is_falling() and mario.rect.bottom <= nokonoko.rect.top + 5:
+                    nokonoko.stomp()
+                else:
+                    mario.set_game_over()
+
+        # 敵キャラクター同士の衝突判定
+        # 判定したペアを管理
+        processed = set()
+        for enemy in enemies:
+            collided = pg.sprite.spritecollide(enemy, enemies, False)
+            for other in collided:
+                # 同じ衝突ペアが複数回処理されるのを回避（A が B と衝突）（B が A と衝突）
+                if other != enemy and (enemy, other) not in processed and (other, enemy) not in processed:
+                    if isinstance(enemy, (Kuriboh, Nokonoko)) and isinstance(other, (Kuriboh, Nokonoko)):
+                        enemy.reverse_direction()
+                        other.reverse_direction()
+                        # 衝突判定したペアを記録
+                        processed.add((enemy, other))
+
         # グループの更新
         group.update()
 
@@ -202,11 +311,12 @@ def main():
         # 画面を更新
         pg.display.flip()
 
-        # フレームレートを設定
+        # フレームレートを設定(1秒間に30フレーム)
         clock.tick(30)
 
     pg.quit()
     sys.exit()
+
 
 if __name__ == '__main__':
     main()
