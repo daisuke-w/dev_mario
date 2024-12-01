@@ -126,6 +126,9 @@ class Kuriboh(pg.sprite.Sprite):
         self.__stomped = True
         self.image = self.__imgs[2]
 
+    def reverse_direction(self):
+        self.__vx *= -1
+
     def update(self):
         # 踏まれたら動かない
         if self.__stomped:
@@ -178,6 +181,9 @@ class Nokonoko(pg.sprite.Sprite):
         self.__stomped = True
         self.image = self.__imgs[2]
 
+    def reverse_direction(self):
+        self.__vx *= -1
+
     def update(self):
         # 踏まれたら動かない
         if self.__stomped:
@@ -222,11 +228,14 @@ def main():
 
     # スプライトグループを定義
     group = pg.sprite.RenderUpdates()
+    # 敵キャラクターグループを定義
+    enemies = pg.sprite.Group()
     # 各スプライトを構築してグループに追加
     mario = Mario()
     kuriboh = Kuriboh()
     nokonoko = Nokonoko()
     group.add(mario, kuriboh, nokonoko)
+    enemies.add(kuriboh, nokonoko)
 
     # イベントループ
     while running:
@@ -255,6 +264,20 @@ def main():
                     nokonoko.stomp()
                 else:
                     mario.set_game_over()
+
+        # 敵キャラクター同士の衝突判定
+        # 判定したペアを管理
+        processed = set()
+        for enemy in enemies:
+            collided = pg.sprite.spritecollide(enemy, enemies, False)
+            for other in collided:
+                # 同じ衝突ペアが複数回処理されるのを回避（A が B と衝突）（B が A と衝突）
+                if other != enemy and (enemy, other) not in processed and (other, enemy) not in processed:
+                    if isinstance(enemy, (Kuriboh, Nokonoko)) and isinstance(other, (Kuriboh, Nokonoko)):
+                        enemy.reverse_direction()
+                        other.reverse_direction()
+                        # 衝突判定したペアを記録
+                        processed.add((enemy, other))
 
         # グループの更新
         group.update()
