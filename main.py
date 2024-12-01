@@ -181,6 +181,10 @@ class Nokonoko(pg.sprite.Sprite):
         self.__frame_counter = 0
         # 踏まれたかどうか
         self.__stomped = False
+        # 踏まれた後の経過フレーム
+        self.__stomped_timer = 0
+        # 踏まれた後消えるまでの時間（フレーム数）
+        self.__disappear_delay = 15
 
     def is_stomped(self):
         return self.__stomped
@@ -199,8 +203,13 @@ class Nokonoko(pg.sprite.Sprite):
         self.image = pg.transform.flip(self.__imgs[current_img], not self.__isLeft, False)
 
     def update(self):
-        # 踏まれたら動かない
+        # 踏まれた後の処理
+        # TODO ノコノコも一旦消える形にするが将来的には甲羅を蹴れるようにする
         if self.__stomped:
+            self.__stomped_timer += 1
+            if self.__stomped_timer >= self.__disappear_delay:
+                # 一定時間経過後に削除
+                self.kill()
             return
 
         # フレームカウンターを増加
