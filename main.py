@@ -182,7 +182,13 @@ class Nokonoko(pg.sprite.Sprite):
         self.image = self.__imgs[2]
 
     def reverse_direction(self):
+        """ 進行方向と画像の向きを反転する"""
         self.__vx *= -1
+        # 左右フラグを反転
+        self.__isLeft = not self.__isLeft
+        # 現在の画像フレームに基づいて画像を更新
+        current_img = self.__frame_counter // 10 % 2
+        self.image = pg.transform.flip(self.__imgs[current_img], not self.__isLeft, False)
 
     def update(self):
         # 踏まれたら動かない
