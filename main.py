@@ -38,7 +38,7 @@ class Mario(pg.sprite.Sprite):
         ]
 
         self.image = self.__imgs[0]
-        self.rect = pg.Rect(150, 200, 20, 20)
+        self.rect = pg.Rect(50, 200, 20, 20)
 
     def __right(self):
         self.rect.x += 5
