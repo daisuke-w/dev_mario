@@ -1,5 +1,6 @@
 import sys
 import pygame as pg
+
 from settings import WIDTH, HEIGHT
 from mario import Mario
 from kuriboh import Kuriboh
@@ -26,7 +27,7 @@ def main():
     mario = Mario()
     kuriboh = Kuriboh()
     nokonoko = Nokonoko()
-
+    # グループに追加
     group.add(mario, kuriboh, nokonoko)
     enemies.add(kuriboh, nokonoko)
 
@@ -74,19 +75,15 @@ def main():
 
         # グループの更新
         group.update()
-
         # グループの描画
         group.draw(win)
-
         # 画面を更新
         pg.display.flip()
-
         # フレームレートを設定(1秒間に30フレーム)
         clock.tick(30)
 
     pg.quit()
     sys.exit()
-
 
 if __name__ == '__main__':
     main()
