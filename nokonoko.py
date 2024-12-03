@@ -38,7 +38,7 @@ class Nokonoko(pg.sprite.Sprite):
         self.image = self.__imgs[2]
 
     def reverse_direction(self):
-        ''' 進行方向と画像の向きを反転する'''
+        ''' 進行方向と画像の向きを反転する '''
         self.__vx *= -1
         # 左右フラグを反転
         self.__isLeft = not self.__isLeft
