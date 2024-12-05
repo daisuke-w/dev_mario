@@ -17,6 +17,8 @@ class Mario(pg.sprite.Sprite):
         self.__vy = 0
         # マリオが地面にいるかどうか
         self.__on_ground = True
+        # マリオがブロックの上にいるかどうか
+        self.__on_block = False
         # Game Overフラグ
         self.__game_over = False
 
@@ -47,6 +49,7 @@ class Mario(pg.sprite.Sprite):
             # ジャンプ速度をリセット
             self.__vy = self.__jump_speed
             self.__on_ground = False
+            self.leave_block()
 
     def set_game_over(self):
         self.__game_over = True
@@ -54,6 +57,18 @@ class Mario(pg.sprite.Sprite):
 
     def is_falling(self):
         return self.__vy > 0
+
+    def land_on_block(self, top):
+        # ブロックの上に乗る
+        self.rect.bottom = top
+        # 垂直速度をリセット
+        self.__vy = 0
+        self.__on_ground = False
+        self.__on_block = True
+
+    def leave_block(self):
+        # ブロックから離れる
+        self.__on_block = False
 
     def update(self):
         # Game Over時は動かない
@@ -73,12 +88,23 @@ class Mario(pg.sprite.Sprite):
         if not self.__on_ground:
             self.rect.y += self.__vy
             self.__vy += 1
+            # 地面に着地した場合
             if self.rect.y > 200:
                 self.rect.y = 200
                 self.__on_ground = True
+                self.leave_block()
+
+            # ブロックに着地した場合
+            elif self.__on_block:
+                self.__vy = 0
+                # ブロックの上にいるが、地面ではない
+                self.__on_ground = False
+
+            else:
+                self.leave_block()
 
         # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
-        if not self.__on_ground:
+        if not self.__on_ground and not self.__on_block:
             # ジャンプ中の画像
             self.image = pg.transform.flip(self.__imgs[3], self.__isLeft, False)
         else:
