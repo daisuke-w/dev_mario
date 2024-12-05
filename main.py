@@ -83,6 +83,19 @@ def main():
                         # 衝突判定したペアを記録
                         processed.add((enemy, other))
 
+        # ブロックとの衝突判定
+        collided_blocks = pg.sprite.spritecollide(mario, blocks, False)
+        if collided_blocks:
+            for block in collided_blocks:
+                # マリオが上からブロックに着地した場合
+                if isinstance(block, (Block)):
+                    if mario.is_falling() and mario.rect.bottom <= block.rect.top + 5:
+                        mario.land_on_block(block.rect.top)
+                    else:
+                        mario.leave_block()
+        else:
+            mario.leave_block()
+
         # グループの更新
         group.update()
         # グループの描画
