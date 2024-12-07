@@ -1,6 +1,7 @@
 import sys
 import pygame as pg
 
+from debug import debug_log
 from settings import WIDTH, HEIGHT, TILE_SIZE, BLOCK_MAP
 from mario import Mario
 from kuriboh import Kuriboh
@@ -36,7 +37,7 @@ def main():
     enemies.add(kuriboh, nokonoko)
 
     # ブロック画像を読み込み
-    Block.load_image(TILE_SIZE)
+    Block.load_images(TILE_SIZE)
     # ブロックを生成してグループに追加
     blocks = Block.create_blocks(BLOCK_MAP, TILE_SIZE)
     group.add(blocks)
@@ -87,14 +88,32 @@ def main():
         collided_blocks = pg.sprite.spritecollide(mario, blocks, False)
         if collided_blocks:
             for block in collided_blocks:
-                # マリオが上からブロックに着地した場合
-                if isinstance(block, (Block)):
-                    if mario.is_falling() and mario.rect.bottom <= block.rect.top + 5:
+                # 上からの衝突
+                if mario.is_falling() and mario.rect.bottom >= block.rect.top:
+                    if not mario._Mario__on_block:
                         mario.land_on_block(block.rect.top)
-                    else:
-                        mario.leave_block()
+                        break
+                # 下からの衝突（ジャンプ時）
+                elif mario._Mario__vy < 0:
+                    mario.rect.top = block.rect.bottom
+                    mario._Mario__vy = 0
+                    break
+                # 左右の衝突
+                elif mario.rect.right >= block.rect.left and mario.rect.left < block.rect.centerx:
+                    mario.rect.right = block.rect.left + 2
+                    break
+                elif mario.rect.left <= block.rect.right and mario.rect.right > block.rect.centerx:
+                    mario.rect.left = block.rect.right + 2
+                    break
         else:
-            mario.leave_block()
+            # マリオの下に他のブロックがない場合は `leave_block` を呼び出す
+            block_below = [
+                block for block in blocks
+                if mario.rect.left < block.rect.right and mario.rect.right > block.rect.left
+                and 0 <= block.rect.top - mario.rect.bottom <= 5
+            ]
+            if not block_below and mario._Mario__on_block:
+                mario.leave_block()
 
         # グループの更新
         group.update()
