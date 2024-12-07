@@ -1,4 +1,5 @@
 import pygame as pg
+from debug import debug_log
 
 
 class Mario(pg.sprite.Sprite):
@@ -45,7 +46,7 @@ class Mario(pg.sprite.Sprite):
         self.__walkIndex += 1
 
     def __jump(self):
-        if self.__on_ground:
+        if self.__on_ground or self.__on_block:
             # ジャンプ速度をリセット
             self.__vy = self.__jump_speed
             self.__on_ground = False
@@ -90,16 +91,15 @@ class Mario(pg.sprite.Sprite):
             self.__vy += 1
             # 地面に着地した場合
             if self.rect.y > 200:
+                self.__vy = 0
                 self.rect.y = 200
                 self.__on_ground = True
                 self.leave_block()
-
             # ブロックに着地した場合
             elif self.__on_block:
                 self.__vy = 0
                 # ブロックの上にいるが、地面ではない
                 self.__on_ground = False
-
             else:
                 self.leave_block()
 
