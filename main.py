@@ -87,24 +87,21 @@ def main():
         # ブロックとの衝突判定
         collided_blocks = pg.sprite.spritecollide(mario, blocks, False)
         if collided_blocks:
-            for block in collided_blocks:
-                # 上からの衝突
-                if mario.is_falling() and mario.rect.bottom >= block.rect.top:
-                    if not mario._Mario__on_block:
-                        mario.land_on_block(block.rect.top)
-                        break
-                # 下からの衝突（ジャンプ時）
-                elif mario._Mario__vy < 0:
-                    mario.rect.top = block.rect.bottom
-                    mario._Mario__vy = 0
-                    break
-                # 左右の衝突
-                elif mario.rect.right >= block.rect.left and mario.rect.left < block.rect.centerx:
-                    mario.rect.right = block.rect.left + 2
-                    break
-                elif mario.rect.left <= block.rect.right and mario.rect.right > block.rect.centerx:
-                    mario.rect.left = block.rect.right + 2
-                    break
+            top_block = max(collided_blocks, key=lambda block: block.rect.top)
+
+            # 上からの衝突
+            if mario.is_falling() and mario.rect.bottom >= top_block.rect.top:
+                if not mario._Mario__on_block:
+                    mario.land_on_block(top_block.rect.top)
+            # 下からの衝突（ジャンプ時）
+            elif mario._Mario__vy < 0:
+                mario.rect.top = top_block.rect.bottom
+                mario._Mario__vy = 0
+            # 左右の衝突
+            elif mario.rect.right >= top_block.rect.left and mario.rect.left < top_block.rect.centerx:
+                mario.rect.right = top_block.rect.left + 2
+            elif mario.rect.left <= top_block.rect.right and mario.rect.right > top_block.rect.centerx:
+                mario.rect.left = top_block.rect.right + 2
         else:
             # マリオの下に他のブロックがない場合は `leave_block` を呼び出す
             block_below = [
