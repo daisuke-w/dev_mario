@@ -35,6 +35,18 @@ class Mario(pg.sprite.Sprite):
         self.image = self.__imgs[0]
         self.rect = pg.Rect(50, 200, 20, 20)
 
+    @property
+    def vy(self):
+        return self.__vy
+
+    @vy.setter
+    def vy(self, value):
+        self.__vy = value
+
+    @property
+    def on_block(self):
+        return self.__on_block
+
     def __right(self):
         self.rect.x += 5
         self.__isLeft = False
