@@ -90,12 +90,12 @@ def main():
             top_block = max(collided_blocks, key=lambda block: block.rect.top)
             # 上からの衝突
             if mario.is_falling() and mario.rect.bottom <= top_block.rect.top + 6:
-                if not mario._Mario__on_block:
+                if not mario.on_block:
                     mario.land_on_block(top_block.rect.top)
             # 下からの衝突（ジャンプ時）
-            elif mario._Mario__vy < 0:
+            elif mario.vy < 0:
                 mario.rect.top = top_block.rect.bottom
-                mario._Mario__vy = 0
+                mario.vy = 0
             # 左右の衝突
             elif mario.rect.right >= top_block.rect.left and mario.rect.left < top_block.rect.centerx:
                 mario.rect.right = top_block.rect.left + 2
@@ -108,7 +108,7 @@ def main():
                 if mario.rect.left < block.rect.right and mario.rect.right > block.rect.left
                 and 0 <= block.rect.top - mario.rect.bottom <= 5
             ]
-            if not block_below and mario._Mario__on_block:
+            if not block_below and mario.on_block:
                 mario.leave_block()
 
         # グループの更新
