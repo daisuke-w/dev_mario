@@ -88,9 +88,8 @@ def main():
         collided_blocks = pg.sprite.spritecollide(mario, blocks, False)
         if collided_blocks:
             top_block = max(collided_blocks, key=lambda block: block.rect.top)
-
             # 上からの衝突
-            if mario.is_falling() and mario.rect.bottom >= top_block.rect.top:
+            if mario.is_falling() and mario.rect.bottom <= top_block.rect.top + 6:
                 if not mario._Mario__on_block:
                     mario.land_on_block(top_block.rect.top)
             # 下からの衝突（ジャンプ時）
