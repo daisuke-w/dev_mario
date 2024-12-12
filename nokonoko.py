@@ -30,6 +30,10 @@ class Nokonoko(pg.sprite.Sprite):
         # 踏まれた後消えるまでの時間（フレーム数）
         self.__disappear_delay = 15
 
+    @property
+    def vx(self):
+        return self.__vx
+
     def is_stomped(self):
         return self.__stomped
 
