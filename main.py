@@ -89,7 +89,7 @@ def main():
         if collided_blocks:
             top_block = max(collided_blocks, key=lambda block: block.rect.top)
             # 上からの衝突
-            if mario.is_falling() and mario.rect.bottom <= top_block.rect.top + 6:
+            if mario.is_falling() and mario.rect.bottom <= top_block.rect.top + 12:
                 if not mario.on_block:
                     mario.land_on_block(top_block.rect.top)
             # 下からの衝突（ジャンプ時）
