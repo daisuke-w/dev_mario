@@ -20,7 +20,8 @@ class Block(pg.sprite.Sprite):
         ''' ブロック画像を読み込んでクラス変数に設定 '''
         cls.__imgs = {
             1: pg.transform.scale(pg.image.load('images/wall_001.png').convert_alpha(), (tile_size, tile_size)),
-            2: pg.transform.scale(pg.image.load('images/block_001.png').convert_alpha(), (tile_size, tile_size))
+            2: pg.transform.scale(pg.image.load('images/block_001.png').convert_alpha(), (tile_size, tile_size)),
+            3: pg.transform.scale(pg.image.load('images/hatena_001.png').convert_alpha(), (tile_size, tile_size))
         }
 
     @classmethod
