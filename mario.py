@@ -83,7 +83,7 @@ class Mario(pg.sprite.Sprite):
         # ブロックから離れる
         self.__on_block = False
 
-    def update(self):
+    def update(self, dt=0):
         # Game Over時は動かない
         if self.__game_over:
             return

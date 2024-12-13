@@ -42,7 +42,7 @@ class Kuriboh(pg.sprite.Sprite):
     def reverse_direction(self):
         self.__vx *= -1
 
-    def update(self):
+    def update(self, dt=0):
         # 踏まれた後の処理
         if self.__stomped:
             self.__stomped_timer += 1

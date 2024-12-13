@@ -126,14 +126,14 @@ def main():
             if not block_below and mario.on_block:
                 mario.leave_block()
 
+        # フレームレートを設定(1秒間に30フレーム)
+        dt = clock.tick(30)
         # グループの更新
-        group.update()
+        group.update(dt)
         # グループの描画
         group.draw(win)
         # 画面を更新
         pg.display.flip()
-        # フレームレートを設定(1秒間に30フレーム)
-        clock.tick(30)
 
     pg.quit()
     sys.exit()

@@ -50,7 +50,7 @@ class Nokonoko(pg.sprite.Sprite):
         current_img = self.__frame_counter // 10 % 2
         self.image = pg.transform.flip(self.__imgs[current_img], not self.__isLeft, False)
 
-    def update(self):
+    def update(self, dt=0):
         # 踏まれた後の処理
         # TODO ノコノコも一旦消える形にするが将来的には甲羅を蹴れるようにする
         if self.__stomped:
