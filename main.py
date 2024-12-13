@@ -1,10 +1,12 @@
 import sys
 import pygame as pg
 
-from settings import WIDTH, HEIGHT
+from debug import debug_log
+from settings import WIDTH, HEIGHT, TILE_SIZE, BLOCK_MAP
 from mario import Mario
 from kuriboh import Kuriboh
 from nokonoko import Nokonoko
+from block import Block
 
 def main():
     ''' メイン関数 '''
@@ -23,6 +25,9 @@ def main():
     group = pg.sprite.RenderUpdates()
     # 敵キャラクターグループを定義
     enemies = pg.sprite.Group()
+    # ブロックグループを定義
+    blocks = pg.sprite.Group()
+
     # 各スプライトを構築してグループに追加
     mario = Mario()
     kuriboh = Kuriboh()
@@ -30,6 +35,12 @@ def main():
     # グループに追加
     group.add(mario, kuriboh, nokonoko)
     enemies.add(kuriboh, nokonoko)
+
+    # ブロック画像を読み込み
+    Block.load_images(TILE_SIZE)
+    # ブロックを生成してグループに追加
+    blocks = Block.create_blocks(BLOCK_MAP, TILE_SIZE)
+    group.add(blocks)
 
     # イベントループ
     while running:
@@ -67,20 +78,62 @@ def main():
             for other in collided:
                 # 同じ衝突ペアが複数回処理されるのを回避（A が B と衝突）（B が A と衝突）
                 if other != enemy and (enemy, other) not in processed and (other, enemy) not in processed:
-                    if isinstance(enemy, (Kuriboh, Nokonoko)) and isinstance(other, (Kuriboh, Nokonoko)):
-                        enemy.reverse_direction()
-                        other.reverse_direction()
-                        # 衝突判定したペアを記録
-                        processed.add((enemy, other))
+                    enemy.reverse_direction()
+                    other.reverse_direction()
+                    # 衝突判定したペアを記録
+                    processed.add((enemy, other))
 
+        # 敵キャラクターと壁の衝突判定
+        for enemy in enemies:
+            # 壁（ブロック）との衝突判定
+            collided_blocks = pg.sprite.spritecollide(enemy, blocks, False)
+            for block in collided_blocks:
+                # 右に移動中
+                if enemy.vx > 0:
+                    if enemy.rect.right >= block.rect.left:
+                        enemy.rect.right = block.rect.left
+                        enemy.reverse_direction()
+                # 左に移動中
+                elif enemy.vx < 0:
+                    if enemy.rect.left <= block.rect.right:
+                        enemy.rect.left = block.rect.right
+                        enemy.reverse_direction()
+
+        # ブロックとの衝突判定
+        collided_blocks = pg.sprite.spritecollide(mario, blocks, False)
+        if collided_blocks:
+            top_block = max(collided_blocks, key=lambda block: block.rect.top)
+            # 上からの衝突
+            if mario.is_falling() and mario.rect.bottom <= top_block.rect.top + 12:
+                if not mario.on_block:
+                    mario.land_on_block(top_block.rect.top)
+            # 下からの衝突（ジャンプ時）
+            elif mario.vy < 0:
+                mario.rect.top = top_block.rect.bottom
+                mario.vy = 0
+            # 左右の衝突
+            elif mario.rect.right >= top_block.rect.left and mario.rect.left < top_block.rect.centerx:
+                mario.rect.right = top_block.rect.left + 2
+            elif mario.rect.left <= top_block.rect.right and mario.rect.right > top_block.rect.centerx:
+                mario.rect.left = top_block.rect.right + 2
+        else:
+            # マリオの下に他のブロックがない場合は `leave_block` を呼び出す
+            block_below = [
+                block for block in blocks
+                if mario.rect.left < block.rect.right and mario.rect.right > block.rect.left
+                and 0 <= block.rect.top - mario.rect.bottom <= 5
+            ]
+            if not block_below and mario.on_block:
+                mario.leave_block()
+
+        # フレームレートを設定(1秒間に30フレーム)
+        dt = clock.tick(30)
         # グループの更新
-        group.update()
+        group.update(dt)
         # グループの描画
         group.draw(win)
         # 画面を更新
         pg.display.flip()
-        # フレームレートを設定(1秒間に30フレーム)
-        clock.tick(30)
 
     pg.quit()
     sys.exit()
