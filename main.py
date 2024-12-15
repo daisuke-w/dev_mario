@@ -1,6 +1,7 @@
 import sys
 import pygame as pg
 
+import utils.collision as col
 from utils.debug import debug_log
 from utils.settings import WIDTH, HEIGHT, TILE_SIZE, BLOCK_MAP
 from models.characters.mario import Mario
@@ -53,78 +54,19 @@ def main():
         win.fill((135, 206, 235))
 
         # クリボー衝突判定
-        if pg.sprite.collide_rect(mario, kuriboh):
-            if not kuriboh.is_stomped():
-                # マリオの底辺がクリボーの上辺に触れているかを確認
-                if mario.is_falling() and mario.rect.bottom <= kuriboh.rect.top + 5:
-                    kuriboh.stomp()
-                else:
-                    mario.set_game_over()
+        col.player_enemy_collision(mario, kuriboh)
 
         # ノコノコ衝突判定
-        if pg.sprite.collide_rect(mario, nokonoko):
-            if not nokonoko.is_stomped():
-                # マリオの底辺がノコノコの上辺に触れているかを確認
-                if mario.is_falling() and mario.rect.bottom <= nokonoko.rect.top + 5:
-                    nokonoko.stomp()
-                else:
-                    mario.set_game_over()
+        col.player_enemy_collision(mario, nokonoko)
 
         # 敵キャラクター同士の衝突判定
-        # 判定したペアを管理
-        processed = set()
-        for enemy in enemies:
-            collided = pg.sprite.spritecollide(enemy, enemies, False)
-            for other in collided:
-                # 同じ衝突ペアが複数回処理されるのを回避（A が B と衝突）（B が A と衝突）
-                if other != enemy and (enemy, other) not in processed and (other, enemy) not in processed:
-                    enemy.reverse_direction()
-                    other.reverse_direction()
-                    # 衝突判定したペアを記録
-                    processed.add((enemy, other))
+        col.enemies_collision(enemies)
 
         # 敵キャラクターと壁の衝突判定
-        for enemy in enemies:
-            # 壁（ブロック）との衝突判定
-            collided_blocks = pg.sprite.spritecollide(enemy, blocks, False)
-            for block in collided_blocks:
-                # 右に移動中
-                if enemy.vx > 0:
-                    if enemy.rect.right >= block.rect.left:
-                        enemy.rect.right = block.rect.left
-                        enemy.reverse_direction()
-                # 左に移動中
-                elif enemy.vx < 0:
-                    if enemy.rect.left <= block.rect.right:
-                        enemy.rect.left = block.rect.right
-                        enemy.reverse_direction()
+        col.enemy_block_collision(enemies, blocks)
 
         # ブロックとの衝突判定
-        collided_blocks = pg.sprite.spritecollide(mario, blocks, False)
-        if collided_blocks:
-            top_block = max(collided_blocks, key=lambda block: block.rect.top)
-            # 上からの衝突
-            if mario.is_falling() and mario.rect.bottom <= top_block.rect.top + 12:
-                if not mario.on_block:
-                    mario.land_on_block(top_block.rect.top)
-            # 下からの衝突（ジャンプ時）
-            elif mario.vy < 0:
-                mario.rect.top = top_block.rect.bottom
-                mario.vy = 0
-            # 左右の衝突
-            elif mario.rect.right >= top_block.rect.left and mario.rect.left < top_block.rect.centerx:
-                mario.rect.right = top_block.rect.left + 2
-            elif mario.rect.left <= top_block.rect.right and mario.rect.right > top_block.rect.centerx:
-                mario.rect.left = top_block.rect.right + 2
-        else:
-            # マリオの下に他のブロックがない場合は `leave_block` を呼び出す
-            block_below = [
-                block for block in blocks
-                if mario.rect.left < block.rect.right and mario.rect.right > block.rect.left
-                and 0 <= block.rect.top - mario.rect.bottom <= 5
-            ]
-            if not block_below and mario.on_block:
-                mario.leave_block()
+        col.player_block_collision(mario, blocks)
 
         # フレームレートを設定(1秒間に30フレーム)
         dt = clock.tick(30)
