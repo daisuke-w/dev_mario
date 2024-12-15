@@ -6,8 +6,8 @@ def player_enemy_collision(player, enemy):
     マリオと敵の衝突判定
 
     Args:
-    player: プレイヤーオブジェクト
-    enemy: 敵キャラクターオブジェクト
+        player: プレイヤーオブジェクト
+        enemy: 敵キャラクターオブジェクト
     '''
     if pg.sprite.collide_rect(player, enemy):
         if not enemy.is_stomped():
