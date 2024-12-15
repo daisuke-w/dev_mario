@@ -53,19 +53,19 @@ def main():
         # 背景を水色に塗りつぶす
         win.fill((135, 206, 235))
 
-        # クリボー衝突判定
-        col.player_enemy_collision(mario, kuriboh)
+        # 判定したペアを管理
+        processed = set()
+        for enemy in enemies:
+            # プレイヤーと敵キャラクターの衝突判定
+            col.player_enemy_collision(mario, enemy)
 
-        # ノコノコ衝突判定
-        col.player_enemy_collision(mario, nokonoko)
+            # 敵キャラクター同士の衝突判定
+            col.enemies_collision(processed, enemy, enemies)
 
-        # 敵キャラクター同士の衝突判定
-        col.enemies_collision(enemies)
+            # 敵キャラクターと壁の衝突判定
+            col.enemy_block_collision(enemy, blocks)
 
-        # 敵キャラクターと壁の衝突判定
-        col.enemy_block_collision(enemies, blocks)
-
-        # ブロックとの衝突判定
+        # プレイヤーとブロックの衝突判定
         col.player_block_collision(mario, blocks)
 
         # フレームレートを設定(1秒間に30フレーム)
