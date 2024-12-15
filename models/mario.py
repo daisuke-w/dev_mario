@@ -1,5 +1,5 @@
 import pygame as pg
-from debug import debug_log
+from utils.debug import debug_log
 
 
 class Mario(pg.sprite.Sprite):

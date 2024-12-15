@@ -1,5 +1,5 @@
 import pygame as pg
-from settings import WIDTH
+from utils.settings import WIDTH
 
 
 class Kuriboh(pg.sprite.Sprite):

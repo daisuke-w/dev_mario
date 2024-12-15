@@ -1,12 +1,12 @@
 import sys
 import pygame as pg
 
-from debug import debug_log
-from settings import WIDTH, HEIGHT, TILE_SIZE, BLOCK_MAP
-from mario import Mario
-from kuriboh import Kuriboh
-from nokonoko import Nokonoko
-from block import Block
+from utils.debug import debug_log
+from utils.settings import WIDTH, HEIGHT, TILE_SIZE, BLOCK_MAP
+from models.characters.mario import Mario
+from models.enemies.kuriboh import Kuriboh
+from models.enemies.nokonoko import Nokonoko
+from models.objects.block import Block
 
 def main():
     ''' メイン関数 '''
