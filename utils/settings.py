@@ -6,6 +6,10 @@ TILE_X = 16
 TILE_Y = 14
 # タイルサイズを計算
 TILE_SIZE = WIDTH // TILE_X
+# 背景色
+BACKGROUND = (135, 206, 235) # 水色
+# フレームレート
+FRAME_RATE = 30 # 1秒間に30フレーム
 
 # ブロック配置マップ
 BLOCK_MAP = [

@@ -1,5 +1,5 @@
 import pygame as pg
-from debug import debug_log
+from utils.debug import debug_log
 
 
 class Mario(pg.sprite.Sprite):
@@ -64,6 +64,46 @@ class Mario(pg.sprite.Sprite):
             self.__on_ground = False
             self.leave_block()
 
+    def __handle_horizontal_movement(self, keys):
+        if keys[pg.K_RIGHT]:
+            self.__right()
+        if keys[pg.K_LEFT]:
+            self.__left()
+
+    def __handle_jump(self, keys):
+        if keys[pg.K_SPACE]:
+            self.__jump()
+
+    def __update_vertical_position(self):
+        if not self.__on_ground:
+            self.rect.y += self.__vy
+            self.__vy += 1
+            # 地面に着地した場合
+            if self.rect.y > 200:
+                self.__vy = 0
+                self.rect.y = 200
+                self.__on_ground = True
+                self.leave_block()
+            # ブロックに着地した場合
+            elif self.__on_block:
+                self.__vy = 0
+                # ブロックの上にいるが、地面ではない
+                self.__on_ground = False
+            else:
+                self.leave_block()
+
+    def __change_image(self):
+        # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
+        if not self.__on_ground and not self.__on_block:
+            # ジャンプ中の画像
+            self.image = pg.transform.flip(self.__imgs[3], self.__isLeft, False)
+        else:
+            # 歩行アニメーションの画像
+            self.image = pg.transform.flip(
+                self.__imgs[self.WALK_ANIME_INDEX[self.__walkIndex % 9]],
+                self.__isLeft,
+                False)
+
     def set_game_over(self):
         self.__game_over = True
         self.image = self.__imgs[4]
@@ -90,38 +130,11 @@ class Mario(pg.sprite.Sprite):
 
         # キーボードの状態を取得
         keys = pg.key.get_pressed()
-        if keys[pg.K_RIGHT]:
-            self.__right()
-        if keys[pg.K_LEFT]:
-            self.__left()
-        if keys[pg.K_SPACE]:
-            self.__jump()
+        self.__handle_horizontal_movement(keys)
+        self.__handle_jump(keys)
 
         # Y軸方向に移動
-        if not self.__on_ground:
-            self.rect.y += self.__vy
-            self.__vy += 1
-            # 地面に着地した場合
-            if self.rect.y > 200:
-                self.__vy = 0
-                self.rect.y = 200
-                self.__on_ground = True
-                self.leave_block()
-            # ブロックに着地した場合
-            elif self.__on_block:
-                self.__vy = 0
-                # ブロックの上にいるが、地面ではない
-                self.__on_ground = False
-            else:
-                self.leave_block()
+        self.__update_vertical_position()
 
-        # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
-        if not self.__on_ground and not self.__on_block:
-            # ジャンプ中の画像
-            self.image = pg.transform.flip(self.__imgs[3], self.__isLeft, False)
-        else:
-            # 歩行アニメーションの画像
-            self.image = pg.transform.flip(
-                self.__imgs[self.WALK_ANIME_INDEX[self.__walkIndex % 9]],
-                self.__isLeft,
-                False)
+        # 動作に応じた画像に変換
+        self.__change_image()
