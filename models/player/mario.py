@@ -83,8 +83,7 @@ class Mario(pg.sprite.Sprite):
             self.vy = -12
         
         if self.__dead_animeCounter > 12:
-            self.rect.y += self.vy
-            self.vy += 1
+            self.__apply_gravity()
 
         # ゲーム画面を超えたら終了
         if self.rect.y > HEIGHT:
@@ -92,6 +91,10 @@ class Mario(pg.sprite.Sprite):
             return
 
         self.__dead_animeCounter +=1
+
+    def __apply_gravity(self):
+        self.rect.y += self.vy
+        self.vy += 1
 
     def __handle_horizontal_movement(self, keys):
         if keys[pg.K_RIGHT]:
@@ -105,8 +108,7 @@ class Mario(pg.sprite.Sprite):
 
     def __update_vertical_position(self):
         if not self.__on_ground:
-            self.rect.y += self.vy
-            self.vy += 1
+            self.__apply_gravity()
             # 地面に着地した場合
             if self.rect.y > 200:
                 self.vy = 0
