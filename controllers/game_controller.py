@@ -1,16 +1,21 @@
 import sys
 import pygame as pg
+import time
 
 import utils.collision as col
 import views.render as ren
 
 from utils.settings import BACKGROUND, FRAME_RATE
+from utils.status import Status
 from controllers.game_init import game_init
 
 
 class GameController():
     ''' Gameのイベントを管理するコントローラークラス '''
     def __init__(self):
+        self.__init_game()
+
+    def __init_game(self):
         # Pygameの初期化
         pg.init()
         # イベント実行フラグ
@@ -40,10 +45,18 @@ class GameController():
         # プレイヤーとブロックの衝突判定
         col.player_block_collision(self.mario, self.blocks)
 
+    def reset_game(self):
+        self.__init_game()
+
     def execute(self):
         while self.__running:
             # ゲーム画面が閉じられたかどうかを判定
             self.__handle_events()
+
+            if self.mario.status == Status.GAME_OVER:
+                time.sleep(2)
+                self.reset_game()
+                continue
 
             # 背景を水色に塗りつぶす
             ren.render_background(self.win, BACKGROUND)
