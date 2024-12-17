@@ -1,5 +1,8 @@
 import pygame as pg
+
 from utils.debug import debug_log
+from utils.settings import HEIGHT
+from utils.status import Status
 
 
 class Mario(pg.sprite.Sprite):
@@ -20,8 +23,10 @@ class Mario(pg.sprite.Sprite):
         self.__on_ground = True
         # マリオがブロックの上にいるかどうか
         self.__on_block = False
-        # Game Overフラグ
-        self.__game_over = False
+        # マリオの状態管理
+        self.__status = Status.NORMAL
+        # マリオGameOver時のアニメカウンター
+        self.__dead_animeCounter = 0
 
         # 画像をリストで保持
         self.__imgs = [
@@ -46,6 +51,14 @@ class Mario(pg.sprite.Sprite):
     @property
     def on_block(self):
         return self.__on_block
+    
+    @property
+    def status(self):
+        return self.__status
+    
+    @status.setter
+    def status(self, value):
+        self.__status = value
 
     def __right(self):
         self.rect.x += 5
@@ -63,6 +76,22 @@ class Mario(pg.sprite.Sprite):
             self.__vy = self.__jump_speed
             self.__on_ground = False
             self.leave_block()
+
+    def __dying(self):
+        # Game Overになったら飛び上がる
+        if self.__dead_animeCounter == 0:
+            self.__vy = -12
+        
+        if self.__dead_animeCounter > 12:
+            self.rect.y += self.__vy
+            self.__vy += 1
+
+        # ゲーム画面を超えたら終了
+        if self.rect.y > HEIGHT:
+            self.status = Status.GAME_OVER
+            return
+
+        self.__dead_animeCounter +=1
 
     def __handle_horizontal_movement(self, keys):
         if keys[pg.K_RIGHT]:
@@ -105,7 +134,7 @@ class Mario(pg.sprite.Sprite):
                 False)
 
     def set_game_over(self):
-        self.__game_over = True
+        self.status = Status.DYING
         self.image = self.__imgs[4]
 
     def is_falling(self):
@@ -125,7 +154,12 @@ class Mario(pg.sprite.Sprite):
 
     def update(self, dt=0):
         # Game Over時は動かない
-        if self.__game_over:
+        if self.status == Status.GAME_OVER:
+            return
+
+        # Game Over中にアニメーションを実行
+        if self.status == Status.DYING:
+            self.__dying()
             return
 
         # キーボードの状態を取得
