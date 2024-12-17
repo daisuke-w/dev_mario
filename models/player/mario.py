@@ -64,6 +64,16 @@ class Mario(pg.sprite.Sprite):
             self.__on_ground = False
             self.leave_block()
 
+    def __handle_horizontal_movement(self, keys):
+        if keys[pg.K_RIGHT]:
+            self.__right()
+        if keys[pg.K_LEFT]:
+            self.__left()
+
+    def __handle_jump(self, keys):
+        if keys[pg.K_SPACE]:
+            self.__jump()
+
     def set_game_over(self):
         self.__game_over = True
         self.image = self.__imgs[4]
@@ -90,12 +100,8 @@ class Mario(pg.sprite.Sprite):
 
         # キーボードの状態を取得
         keys = pg.key.get_pressed()
-        if keys[pg.K_RIGHT]:
-            self.__right()
-        if keys[pg.K_LEFT]:
-            self.__left()
-        if keys[pg.K_SPACE]:
-            self.__jump()
+        self.__handle_horizontal_movement(keys)
+        self.__handle_jump(keys)
 
         # Y軸方向に移動
         if not self.__on_ground:
