@@ -34,7 +34,7 @@ class Nokonoko(Enemy):
     def stomp(self):
         super().stomp()
         self.vx = 0
-        self.__is_shell = True
+        self.is_shell = True
         self.stomped_timer = 15
 
     def kicked(self, direction):
