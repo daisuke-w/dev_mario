@@ -1,5 +1,6 @@
 import pygame as pg
 
+from models.enemies.nokonoko import Nokonoko
 
 def player_enemy_collision(player, enemy):
     '''
@@ -15,6 +16,15 @@ def player_enemy_collision(player, enemy):
                 enemy.stomp()
             else:
                 player.set_game_over()
+
+         # ノコノコが甲羅状態の場合
+        if isinstance(enemy, Nokonoko) and enemy.is_shell:
+            # 一定時間経過後蹴る
+            if enemy.stomped_timer == 0:  
+                if player.rect.centerx < enemy.rect.centerx:
+                    enemy.kicked('right')
+                else:
+                    enemy.kicked('left')
 
 def enemies_collision(processed, enemy, enemies):
     '''
