@@ -33,8 +33,8 @@ def game_init():
 
     # 各スプライトを構築してグループに追加
     mario = Mario()
-    kuriboh = Kuriboh()
-    nokonoko = Nokonoko()
+    kuriboh = Kuriboh(mario)
+    nokonoko = Nokonoko(mario)
     # グループに追加
     group.add(mario, kuriboh, nokonoko)
     enemies.add(kuriboh, nokonoko)

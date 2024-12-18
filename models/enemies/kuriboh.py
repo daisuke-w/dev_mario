@@ -6,14 +6,14 @@ from models.enemies.enemy import Enemy
 
 class Kuriboh(Enemy):
     ''' クリボーのクラス '''
-    def __init__(self):
+    def __init__(self, player):
         # クリボー用の画像、初期位置、速度を設定して親クラスを初期化
         images = [
             pg.image.load('images/kuriboh_001.png'),
             pg.image.load('images/kuriboh_002.png'),
             pg.image.load('images/kuriboh_003.png')
         ]
-        super().__init__(images, 180, 200, 2)
+        super().__init__(images, 180, 200, 2, player)
 
     def update(self, dt=0):
         # 踏まれた後の処理

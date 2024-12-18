@@ -6,14 +6,14 @@ from models.enemies.enemy import Enemy
 
 class Nokonoko(Enemy):
     ''' ノコノコのクラス '''
-    def __init__(self):
+    def __init__(self, player):
         # ノコノコ用の画像、初期位置、速度を設定して親クラスを初期化
         images = [
             pg.image.load('images/nokonoko_001.png'),
             pg.image.load('images/nokonoko_002.png'),
             pg.image.load('images/nokonoko_003.png')
         ]
-        super().__init__(images, 200, 200, -2)
+        super().__init__(images, 200, 200, -2, player)
 
         # 甲羅状態かどうか
         self.__is_shell = False
@@ -30,6 +30,10 @@ class Nokonoko(Enemy):
     @property
     def is_shell(self):
         return self.__is_shell
+    
+    @is_shell.setter
+    def is_shell(self, value):
+        self.__is_shell = value
 
     def stomp(self):
         super().stomp()
