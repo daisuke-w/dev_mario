@@ -1,7 +1,12 @@
 from enum import Enum, auto
 
 
-class Status(Enum):
+class PlayerStatus(Enum):
     NORMAL = auto()
     DYING = auto()
     GAME_OVER = auto()
+
+class NokonokoStatus(Enum):
+    NORMAL = auto()
+    SHELL = auto()
+    SHELL_MOVING = auto()

@@ -2,7 +2,7 @@ import pygame as pg
 
 from utils.debug import debug_log
 from utils.settings import HEIGHT
-from utils.status import Status
+from utils.status import PlayerStatus as ps
 
 
 class Mario(pg.sprite.Sprite):
@@ -24,7 +24,7 @@ class Mario(pg.sprite.Sprite):
         # マリオがブロックの上にいるかどうか
         self.__on_block = False
         # マリオの状態管理
-        self.__status = Status.NORMAL
+        self.__status = ps.NORMAL
         # マリオGameOver時のアニメカウンター
         self.__dead_animeCounter = 0
 
@@ -87,7 +87,7 @@ class Mario(pg.sprite.Sprite):
 
         # ゲーム画面を超えたら終了
         if self.rect.y > HEIGHT:
-            self.status = Status.GAME_OVER
+            self.status = ps.GAME_OVER
             return
 
         self.__dead_animeCounter +=1
@@ -136,7 +136,7 @@ class Mario(pg.sprite.Sprite):
                 False)
 
     def set_game_over(self):
-        self.status = Status.DYING
+        self.status = ps.DYING
         self.image = self.__imgs[4]
 
     def is_falling(self):
@@ -156,11 +156,11 @@ class Mario(pg.sprite.Sprite):
 
     def update(self, dt=0):
         # Game Over時は動かない
-        if self.status == Status.GAME_OVER:
+        if self.status == ps.GAME_OVER:
             return
 
         # Game Over中にアニメーションを実行
-        if self.status == Status.DYING:
+        if self.status == ps.DYING:
             self.__dying()
             return
 

@@ -6,7 +6,7 @@ import utils.collision as col
 import views.render as ren
 
 from utils.settings import BACKGROUND, FRAME_RATE
-from utils.status import Status
+from utils.status import PlayerStatus as ps
 from controllers.game_init import game_init
 
 
@@ -53,7 +53,7 @@ class GameController():
             # ゲーム画面が閉じられたかどうかを判定
             self.__handle_events()
 
-            if self.mario.status == Status.GAME_OVER:
+            if self.mario.status == ps.GAME_OVER:
                 time.sleep(2)
                 self.reset_game()
                 continue
