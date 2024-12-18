@@ -2,7 +2,8 @@ import pygame as pg
 
 from utils.settings import WIDTH, SHELL_SPEED
 from models.enemies.enemy import Enemy
-from utils.status import Status
+from utils.status import PlayerStatus as ps
+from utils.status import NokonokoStatus as ns
 
 
 class Nokonoko(Enemy):
@@ -16,8 +17,8 @@ class Nokonoko(Enemy):
         ]
         super().__init__(images, 200, 200, -2, player)
 
-        # 甲羅状態かどうか
-        self.__is_shell = False
+        # ノコノコの状態
+        self.__status = ns.NORMAL
 
     def reverse_direction(self):
         ''' 進行方向と画像の向きを反転する '''
@@ -29,46 +30,48 @@ class Nokonoko(Enemy):
         self.image = pg.transform.flip(self.imgs[current_img], not self.isLeft, False)
 
     @property
-    def is_shell(self):
-        return self.__is_shell
+    def status(self):
+        return self.__status
     
-    @is_shell.setter
-    def is_shell(self, value):
-        self.__is_shell = value
+    @status.setter
+    def status(self, value):
+        self.__status = value
 
     def stomp(self):
         super().stomp()
         self.vx = 0
-        self.is_shell = True
+        self.status = ns.SHELL
         self.stomped_timer = 15
 
     def kicked(self, direction):
         self.vx = SHELL_SPEED if direction == 'right' else -SHELL_SPEED
+        self.status = ns.SHELL_MOVING
         self.stomped_timer = 0
 
     def update(self, dt=0):
         # Game Over時は動かない
-        if self.player.status == Status.DYING or \
-            self.player.status == Status.GAME_OVER :
+        if self.player.status == ps.DYING or \
+            self.player.status == ps.GAME_OVER :
             return
-
-        # 踏まれた後の処理
-        if self.stomped:
-            self.image = self.imgs[2]
-            if self.is_shell:
-                if self.stomped_timer > 0:
-                    self.stomped_timer -= 1
-                else:
-                    self.rect.x += self.vx
-                return
 
         # フレームカウンターを増加
         self.frame_counter += 1
 
-         # 一定フレームごとにアニメーション
-        if self.frame_counter % 10 == 0:
-            current_img = self.frame_counter // 10 % 2
-            self.image = pg.transform.flip(self.imgs[current_img], not self.isLeft, False)
+        # ノコノコの状態に応じて分岐(通常、甲羅、蹴られた状態)
+        if self.status == ns.SHELL:
+            self.image = self.imgs[2]
+            if self.stomped_timer > 0:
+                self.stomped_timer -= 1
+            return
+        elif self.status == ns.SHELL_MOVING:
+            self.image = self.imgs[2]
+            self.rect.x += self.vx
+            return
+        if self.status == ns.NORMAL:
+            # 一定フレームごとにアニメーション
+            if self.frame_counter % 10 == 0:
+                current_img = self.frame_counter // 10 % 2
+                self.image = pg.transform.flip(self.imgs[current_img], not self.isLeft, False)
 
         # X方向に移動
         self.rect.x += self.vx
@@ -76,9 +79,4 @@ class Nokonoko(Enemy):
         # 画面端で反転
         if self.rect.x <= 0 or self.rect.x >= WIDTH - self.rect.width:
             # 方向を反転
-            self.vx = -self.vx
-            self.isLeft = not self.isLeft
-
-            # 即座に反転した画像を設定
-            current_img = self.frame_counter // 10 % 2
-            self.image = pg.transform.flip(self.imgs[current_img], not self.isLeft, False)
+            self.reverse_direction()
