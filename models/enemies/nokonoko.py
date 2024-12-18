@@ -1,6 +1,6 @@
 import pygame as pg
 
-from utils.settings import WIDTH
+from utils.settings import WIDTH, SHELL_SPEED
 from models.enemies.enemy import Enemy
 
 
@@ -15,6 +15,9 @@ class Nokonoko(Enemy):
         ]
         super().__init__(images, 200, 200, -2)
 
+        # 甲羅状態かどうか
+        self.__is_shell = False
+
     def reverse_direction(self):
         ''' 進行方向と画像の向きを反転する '''
         super().reverse_direction()
@@ -24,15 +27,30 @@ class Nokonoko(Enemy):
         current_img = self.frame_counter // 10 % 2
         self.image = pg.transform.flip(self.imgs[current_img], not self.isLeft, False)
 
+    @property
+    def is_shell(self):
+        return self.__is_shell
+
+    def stomp(self):
+        super().stomp()
+        self.vx = 0
+        self.__is_shell = True
+        self.stomped_timer = 15
+
+    def kicked(self, direction):
+        self.vx = SHELL_SPEED if direction == 'right' else -SHELL_SPEED
+        self.stomped_timer = 0
+
     def update(self, dt=0):
         # 踏まれた後の処理
-        # TODO ノコノコも一旦消える形にするが将来的には甲羅を蹴れるようにする
         if self.stomped:
-            self.stomped_timer += 1
-            if self.stomped_timer >= self.disappear_delay:
-                # 一定時間経過後に削除
-                self.kill()
-            return
+            self.image = self.imgs[2]
+            if self.is_shell:
+                if self.stomped_timer > 0:
+                    self.stomped_timer -= 1
+                else:
+                    self.rect.x += self.vx
+                return
 
         # フレームカウンターを増加
         self.frame_counter += 1
