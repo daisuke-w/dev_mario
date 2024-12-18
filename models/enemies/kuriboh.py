@@ -2,6 +2,7 @@ import pygame as pg
 
 from utils.settings import WIDTH
 from models.enemies.enemy import Enemy
+from utils.status import Status
 
 
 class Kuriboh(Enemy):
@@ -16,6 +17,11 @@ class Kuriboh(Enemy):
         super().__init__(images, 180, 200, 2, player)
 
     def update(self, dt=0):
+        # Game Over時は動かない
+        if self.player.status == Status.DYING or \
+            self.player.status == Status.GAME_OVER :
+            return
+
         # 踏まれた後の処理
         if self.stomped:
             self.stomped_timer += 1

@@ -2,6 +2,7 @@ import pygame as pg
 
 from utils.settings import WIDTH, SHELL_SPEED
 from models.enemies.enemy import Enemy
+from utils.status import Status
 
 
 class Nokonoko(Enemy):
@@ -46,6 +47,11 @@ class Nokonoko(Enemy):
         self.stomped_timer = 0
 
     def update(self, dt=0):
+        # Game Over時は動かない
+        if self.player.status == Status.DYING or \
+            self.player.status == Status.GAME_OVER :
+            return
+
         # 踏まれた後の処理
         if self.stomped:
             self.image = self.imgs[2]
