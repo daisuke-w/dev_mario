@@ -13,11 +13,11 @@ def player_enemy_collision(player, enemy):
         enemy: 敵キャラクターオブジェクト
     '''
     if pg.sprite.collide_rect(player, enemy):
-        if not enemy.is_stomped():
-            if player.is_falling() and player.rect.bottom <= enemy.rect.top + 5:
-                enemy.stomp()
-            else:
+        # ノコノコが甲羅状態で動いている場合
+        if isinstance(enemy, Nokonoko) and enemy.status == ns.SHELL_MOVING:
+            if enemy.safe_timer == 0: 
                 player.set_game_over()
+                return
 
          # ノコノコが甲羅状態の場合
         if isinstance(enemy, Nokonoko) and enemy.status == ns.SHELL:
@@ -27,6 +27,13 @@ def player_enemy_collision(player, enemy):
                     enemy.kicked('right')
                 else:
                     enemy.kicked('left')
+            return
+
+        if not enemy.is_stomped():
+            if player.is_falling() and player.rect.bottom <= enemy.rect.top + 5:
+                enemy.stomp()
+            else:
+                player.set_game_over()
 
 def enemies_collision(processed, enemy, enemies):
     '''

@@ -47,6 +47,7 @@ class Nokonoko(Enemy):
         self.vx = SHELL_SPEED if direction == 'right' else -SHELL_SPEED
         self.status = ns.SHELL_MOVING
         self.stomped_timer = 0
+        self.safe_timer = 15
 
     def update(self, dt=0):
         # Game Over時は動かない
@@ -65,6 +66,8 @@ class Nokonoko(Enemy):
         elif self.status == ns.SHELL_MOVING:
             self.image = self.imgs[2]
             self.rect.x += self.vx
+            if self.safe_timer > 0:
+                self.safe_timer -= 1
             return
         if self.status == ns.NORMAL:
             # 一定フレームごとにアニメーション

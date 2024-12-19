@@ -23,6 +23,8 @@ class Enemy(pg.sprite.Sprite):
         self.stomped_timer = 0
         # 踏まれた後消えるまでの時間（フレーム数）
         self.disappear_delay = 15
+        # 衝突無効化の安全時間を管理
+        self.safe_timer = 0
         # プレイヤーの参照を保持
         self.player = player
 
