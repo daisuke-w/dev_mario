@@ -48,6 +48,20 @@ def enemies_collision(processed, enemy, enemies):
     for other in collided:
         # 同じ衝突ペアが複数回処理されるのを回避
         if other != enemy and (enemy, other) not in processed and (other, enemy) not in processed:
+            # ノコノコが甲羅移動中の場合
+            if isinstance(enemy, Nokonoko) and enemy.status == ns.SHELL_MOVING:
+                # 衝突相手を倒す
+                enemies.remove(other)
+                other.kill()
+                continue
+
+            if isinstance(other, Nokonoko) and other.status == ns.SHELL_MOVING:
+                # 自分を削除
+                enemies.remove(enemy)
+                enemy.kill()
+                continue
+
+            # 通常の敵同士の衝突処理
             enemy.reverse_direction()
             other.reverse_direction()
             # 衝突判定したペアを記録
@@ -55,7 +69,7 @@ def enemies_collision(processed, enemy, enemies):
 
 def player_block_collision(player, blocks):
     '''
-    敵キャラクターと壁の衝突判定
+    プレイヤーと壁の衝突判定
 
     Args:
         player: プレイヤーオブジェクト
