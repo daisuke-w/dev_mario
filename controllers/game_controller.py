@@ -33,8 +33,9 @@ class GameController():
         # 判定したペアを管理する為のSET
         processed = set()
         for enemy in self.enemies:
-            # プレイヤーと敵キャラクターの衝突判定
-            col.player_enemy_collision(self.mario, enemy)
+            if not self.mario.is_dying():
+                # プレイヤーと敵キャラクターの衝突判定
+                col.player_enemy_collision(self.mario, enemy)
 
             # 敵キャラクター同士の衝突判定
             col.enemies_collision(processed, enemy, self.enemies)
@@ -42,8 +43,9 @@ class GameController():
             # 敵キャラクターと壁の衝突判定
             col.enemy_block_collision(enemy, self.blocks)
 
-        # プレイヤーとブロックの衝突判定
-        col.player_block_collision(self.mario, self.blocks)
+        if not self.mario.is_dying():
+            # プレイヤーとブロックの衝突判定
+            col.player_block_collision(self.mario, self.blocks)
 
     def reset_game(self):
         self.__init_game()

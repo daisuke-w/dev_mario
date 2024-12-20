@@ -139,6 +139,12 @@ class Mario(pg.sprite.Sprite):
         self.status = ps.DYING
         self.image = self.__imgs[4]
 
+    def is_game_over(self):
+        return self.status == ps.GAME_OVER
+
+    def is_dying(self):
+        return self.status == ps.DYING
+
     def is_falling(self):
         return self.vy > 0
 
@@ -156,11 +162,11 @@ class Mario(pg.sprite.Sprite):
 
     def update(self, dt=0):
         # Game Over時は動かない
-        if self.status == ps.GAME_OVER:
+        if self.is_game_over():
             return
 
         # Game Over中にアニメーションを実行
-        if self.status == ps.DYING:
+        if self.is_dying():
             self.__dying()
             return
 
