@@ -21,7 +21,7 @@ class GameController():
         # イベント実行フラグ
         self.__running = True
         # 各種オブジェクトを生成
-        self.win, self.clock, self.mario, self.group, self.enemies, self.blocks = game_init()
+        self.win, self.clock, self.mario, self.group, self.enemies, self.blocks, self.items = game_init()
 
     def __handle_events(self):
         # イベント処理
@@ -45,7 +45,7 @@ class GameController():
 
         if not self.mario.is_dying():
             # プレイヤーとブロックの衝突判定
-            col.player_block_collision(self.mario, self.blocks)
+            col.player_block_collision(self.group, self.mario, self.blocks, self.items)
 
     def reset_game(self):
         self.__init_game()

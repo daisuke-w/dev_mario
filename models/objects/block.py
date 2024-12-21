@@ -1,14 +1,19 @@
 import pygame as pg
 
+from models.objects.items.kinoko import Kinoko
 
 class Block(pg.sprite.Sprite):
     # クラス変数として画像を保持
     __imgs = {}
     __animated_imgs = {}
 
-    def __init__(self, x, y, cell_type):
+    def __init__(self, x, y, cell_type, item_type=None):
         super().__init__()
         self.cell_type = cell_type
+        # アイテムの種類
+        self.item_type = item_type
+        # アイテムがすでに生成されたかどうか
+        self.item_released = False
 
         # セルの種類に応じて画像を設定
         if cell_type in Block.__animated_imgs:
@@ -28,6 +33,16 @@ class Block(pg.sprite.Sprite):
         # 位置を設定
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
+
+    def release_item(self, group, items, player):
+        ''' ブロックを叩いてアイテムを生成 '''
+        if not self.item_released and self.item_type is not None:
+            if self.item_type == 'kinoko':
+                item = Kinoko(self.rect.centerx, self.rect.top - 16, player)
+                items.add(item)
+                group.add(items, layer=2)
+
+            self.item_released = True
 
     def update(self, dt=0):
         ''' アニメーションの更新処理 '''
@@ -60,6 +75,9 @@ class Block(pg.sprite.Sprite):
             for x, cell in enumerate(row):
                 # 画像が定義されているセル値のみ追加
                 if cell in cls.__imgs or cell in cls.__animated_imgs:
-                    block = cls(x * tile_size, y * tile_size, cell)
+                    if cell == 3:
+                        block = cls(x * tile_size, y * tile_size, cell, item_type='kinoko')
+                    else:
+                        block = cls(x * tile_size, y * tile_size, cell)
                     blocks.add(block)
         return blocks
