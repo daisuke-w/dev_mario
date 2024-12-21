@@ -30,6 +30,8 @@ def game_init():
     enemies = pg.sprite.Group()
     # ブロックグループを定義
     blocks = pg.sprite.Group()
+    # アイテムグループを定義
+    items = pg.sprite.Group()
 
     # 各スプライトを構築してグループに追加
     mario = Mario()
@@ -45,4 +47,4 @@ def game_init():
     group.add(blocks, layer=0)
     enemies.add(kuriboh, nokonoko)
 
-    return win, clock, mario, group, enemies, blocks
+    return win, clock, mario, group, enemies, blocks, items
