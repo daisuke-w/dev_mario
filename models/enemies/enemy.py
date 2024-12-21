@@ -4,7 +4,7 @@ import pygame as pg
 class Enemy(pg.sprite.Sprite):
     ''' 敵キャラクターの基底クラス '''
     def __init__(self, images, initial_x, initial_y, initial_vx, player):
-        pg.sprite.Sprite.__init__(self)
+        super().__init__()
 
         # 画像をリストで保持
         self.imgs = images
