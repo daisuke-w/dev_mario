@@ -20,6 +20,8 @@ class Item(pg.sprite.Sprite):
         self.active = True
         # プレイヤーの参照を保持
         self.player = player
+        # アイテムが地上にあるか
+        self.on_ground = False
 
     def update(self, dt=0):
         # Game Over時は動かない
