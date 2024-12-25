@@ -47,6 +47,9 @@ class GameController():
             # プレイヤーとブロックの衝突判定
             col.player_block_collision(self.group, self.mario, self.blocks, self.items)
 
+            # アイテムとブロックの衝突判定
+            col.item_block_collision(self.items, self.blocks)
+
     def reset_game(self):
         self.__init_game()
 
