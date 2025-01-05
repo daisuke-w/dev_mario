@@ -1,5 +1,6 @@
 import pygame as pg
 
+from utils.debug import debug_log
 from utils.status import PlayerStatus as ps
 
 
@@ -12,7 +13,7 @@ class Item(pg.sprite.Sprite):
         self.imgs = images
         self.image = self.imgs[0]
         # 位置を設定
-        self.rect = self.image.get_rect()
+        self.rect = pg.Rect(x, y, 20, 20)
         self.rect.topleft = (x, y)
         # アイテムが出現するときの上方向の速度
         self.vy = vy
@@ -22,6 +23,12 @@ class Item(pg.sprite.Sprite):
         self.player = player
         # アイテムが地上にあるか
         self.on_ground = False
+        # アイテムがブロックの上にあるか
+        self.on_block = True
+
+    def apply_gravity(self):
+        self.rect.y += self.vy
+        self.vy += 1
 
     def update(self, dt=0):
         # Game Over時は動かない
