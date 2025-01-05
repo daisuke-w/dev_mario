@@ -122,6 +122,31 @@ def enemy_block_collision(enemy, blocks):
                 enemy.rect.left = block.rect.right
                 enemy.reverse_direction()
 
+def item_block_collision(items, blocks):
+    '''
+    アイテムとブロックの衝突判定処理
+    Args:
+        items: アイテムのグループ
+        blocks: ブロックのグループ
+    '''
+    for item in items:
+        if item.active:
+            continue
+
+        # 衝突判定
+        if item.on_ground:
+            collisions = pg.sprite.spritecollide(item, blocks, False)
+            if collisions:
+                for block in collisions:
+                    # 横方向の衝突（壁との接触）
+                    if item.vx != 0:
+                        if item.rect.right > block.rect.left and item.vx > 0:
+                            item.rect.right = block.rect.left
+                            item.vx *= -1
+                        elif item.rect.left < block.rect.right and item.vx < 0:
+                            item.rect.left = block.rect.right
+                            item.vx *= -1
+
 def is_touching_block_below(target_rect, tile_size, block_map):
     '''
     targetが下のブロックに触れているかを確認
