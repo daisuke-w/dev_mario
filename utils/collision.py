@@ -1,8 +1,9 @@
 import pygame as pg
 
+from utils.debug import debug_log
+from utils.settings import TILE_SIZE, BLOCK_MAP
 from models.enemies.nokonoko import Nokonoko
 from utils.status import NokonokoStatus as ns
-
 
 def player_enemy_collision(player, enemy):
     '''
@@ -95,14 +96,9 @@ def player_block_collision(group, player, blocks, items):
             player.rect.left = top_block.rect.right + 2
     else:
         # マリオの下に他のブロックがない場合は `leave_block` を呼び出す
-        block_below = [
-            block for block in blocks
-            if player.rect.left < block.rect.right and player.rect.right > block.rect.left
-            and 0 <= block.rect.top - player.rect.bottom <= 5
-        ]
-        if not block_below and player.on_block:
+        result = is_touching_block_below(player.rect, TILE_SIZE, BLOCK_MAP)
+        if not result and player.on_block:
             player.leave_block()
-
 
 def enemy_block_collision(enemy, blocks):
     '''
@@ -125,3 +121,26 @@ def enemy_block_collision(enemy, blocks):
             if enemy.rect.left <= block.rect.right:
                 enemy.rect.left = block.rect.right
                 enemy.reverse_direction()
+
+def is_touching_block_below(target_rect, tile_size, block_map):
+    '''
+    targetが下のブロックに触れているかを確認
+    '''
+    bottom_tile_y = (target_rect.bottom - 1) // tile_size
+    left_tile_x = target_rect.left // tile_size
+    right_tile_x = (target_rect.right - 1) // tile_size
+
+    # アイテムがタイルサイズに差し掛かった際にTrueを返却しないようにする暫定対応
+    # 例えば地面が220:240の位置にある時、
+    # アイテムのbottomが205等に入ると200:220のエリアにいることになり、Trueを返却してしまうが
+    # 画面上は地面(220)に触れていない為浮いた状態になってしまう
+    # 地面の位置により値が変動する為この対応ではまずい
+    if 200 <= target_rect.bottom < 220:
+        return False 
+
+    if bottom_tile_y + 1 < len(block_map):
+        for x in range(left_tile_x, right_tile_x + 1):
+            if 0 <= x < len(block_map[0]):
+                if block_map[bottom_tile_y + 1][x] != 0:
+                    return True
+    return False
