@@ -1,5 +1,6 @@
 import pygame as pg
 
+from utils.debug import debug_log
 from models.objects.items.kinoko import Kinoko
 
 class Block(pg.sprite.Sprite):
@@ -38,7 +39,7 @@ class Block(pg.sprite.Sprite):
         ''' ブロックを叩いてアイテムを生成 '''
         if not self.item_released and self.item_type is not None:
             if self.item_type == 'kinoko':
-                item = Kinoko(self.rect.centerx, self.rect.top - 16, player)
+                item = Kinoko(self.rect.left, self.rect.top -18, player)
                 items.add(item)
                 group.add(items, layer=2)
 
