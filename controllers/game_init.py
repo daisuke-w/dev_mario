@@ -25,24 +25,26 @@ def game_init():
     clock = pg.time.Clock()
 
     # スプライトグループを定義
-    group = pg.sprite.RenderUpdates()
+    group = pg.sprite.LayeredUpdates()
     # 敵キャラクターグループを定義
     enemies = pg.sprite.Group()
     # ブロックグループを定義
     blocks = pg.sprite.Group()
+    # アイテムグループを定義
+    items = pg.sprite.Group()
 
     # 各スプライトを構築してグループに追加
     mario = Mario()
-    kuriboh = Kuriboh()
-    nokonoko = Nokonoko()
-    # グループに追加
-    group.add(mario, kuriboh, nokonoko)
-    enemies.add(kuriboh, nokonoko)
-
+    kuriboh = Kuriboh(mario)
+    nokonoko = Nokonoko(mario)
     # ブロック画像を読み込み
     Block.load_images(TILE_SIZE)
     # ブロックを生成してグループに追加
     blocks = Block.create_blocks(BLOCK_MAP, TILE_SIZE)
-    group.add(blocks)
+    # グループに追加
+    group.add(mario, layer=2)
+    group.add(kuriboh, nokonoko, layer=1)
+    group.add(blocks, layer=0)
+    enemies.add(kuriboh, nokonoko)
 
-    return win, clock, mario, group, enemies, blocks
+    return win, clock, mario, group, enemies, blocks, items

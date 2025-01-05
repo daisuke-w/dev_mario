@@ -3,8 +3,8 @@ import pygame as pg
 
 class Enemy(pg.sprite.Sprite):
     ''' 敵キャラクターの基底クラス '''
-    def __init__(self, images, initial_x, initial_y, initial_vx):
-        pg.sprite.Sprite.__init__(self)
+    def __init__(self, images, initial_x, initial_y, initial_vx, player):
+        super().__init__()
 
         # 画像をリストで保持
         self.imgs = images
@@ -23,6 +23,10 @@ class Enemy(pg.sprite.Sprite):
         self.stomped_timer = 0
         # 踏まれた後消えるまでの時間（フレーム数）
         self.disappear_delay = 15
+        # 衝突無効化の安全時間を管理
+        self.safe_timer = 0
+        # プレイヤーの参照を保持
+        self.player = player
 
     def is_stomped(self):
         return self.stomped

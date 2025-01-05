@@ -1,6 +1,6 @@
 # 画面サイズ
 WIDTH = 320
-HEIGHT = 270
+HEIGHT = 280
 # タイル数
 TILE_X = 16
 TILE_Y = 14
@@ -10,6 +10,9 @@ TILE_SIZE = WIDTH // TILE_X
 BACKGROUND = (135, 206, 235) # 水色
 # フレームレート
 FRAME_RATE = 30 # 1秒間に30フレーム
+
+# 甲羅スピード
+SHELL_SPEED = 5
 
 # ブロック配置マップ
 BLOCK_MAP = [
