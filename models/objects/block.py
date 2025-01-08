@@ -39,9 +39,10 @@ class Block(pg.sprite.Sprite):
         ''' ブロックを叩いてアイテムを生成 '''
         if not self.item_released and self.item_type is not None:
             if self.item_type == 'kinoko':
-                item = Kinoko(self.rect.left, self.rect.top -18, player)
+                item = Kinoko(self.rect.left, self.rect.top, player)
+                item.initial_top = self.rect.top
                 items.add(item)
-                group.add(items, layer=2)
+                group.add(items, layer=0)
 
             self.item_released = True
 

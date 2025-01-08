@@ -42,9 +42,9 @@ def game_init():
     # ブロックを生成してグループに追加
     blocks = Block.create_blocks(BLOCK_MAP, TILE_SIZE)
     # グループに追加
-    group.add(mario, layer=2)
-    group.add(kuriboh, nokonoko, layer=1)
-    group.add(blocks, layer=0)
+    group.add(mario, layer=3)
+    group.add(kuriboh, nokonoko, layer=2)
+    group.add(blocks, layer=1)
     enemies.add(kuriboh, nokonoko)
 
     return win, clock, mario, group, enemies, blocks, items
