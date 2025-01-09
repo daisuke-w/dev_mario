@@ -25,6 +25,8 @@ class Item(pg.sprite.Sprite):
         self.on_ground = False
         # アイテムがブロックの上にあるか
         self.on_block = True
+        # 出現する距離
+        self.appear_distance = 20
 
     def apply_gravity(self):
         self.rect.y += self.vy
@@ -34,11 +36,3 @@ class Item(pg.sprite.Sprite):
         # Game Over時は動かない
         if self.player.status in { ps.DYING, ps.GAME_OVER }:
             return
-
-        if self.active:
-            # 上方向に移動
-            self.rect.y += self.vy
-            # 上方向の移動が終わったら停止
-            if self.vy < 0:
-                self.vy = 0
-                self.active = False

@@ -39,11 +39,15 @@ class Block(pg.sprite.Sprite):
         ''' ブロックを叩いてアイテムを生成 '''
         if not self.item_released and self.item_type is not None:
             if self.item_type == 'kinoko':
-                item = Kinoko(self.rect.left, self.rect.top -18, player)
+                item = Kinoko(self.rect.left, self.rect.top, player)
+                item.initial_top = self.rect.top
                 items.add(item)
-                group.add(items, layer=2)
+                group.add(items, layer=0)
 
             self.item_released = True
+            # ブロックのタイプを変更し画像をアイテムリリース後にする
+            self.cell_type = 4
+            self.image = Block.__imgs[4]
 
     def update(self, dt=0):
         ''' アニメーションの更新処理 '''
@@ -62,7 +66,8 @@ class Block(pg.sprite.Sprite):
 
         cls.__imgs = {
             1: load_and_scale('images/wall_001.png'),
-            2: load_and_scale('images/block_001.png')
+            2: load_and_scale('images/block_001.png'),
+            4: load_and_scale('images/hatena_004.png')
         }
         cls.__animated_imgs = {
             3: [load_and_scale(f'images/hatena_{i:03d}.png') for i in range(1, 4)]
