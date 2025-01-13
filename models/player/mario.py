@@ -163,16 +163,28 @@ class Mario(pg.sprite.Sprite):
                 self.leave_block()
 
     def __change_image(self):
-        # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
-        if not self.__on_ground and not self.on_block:
-            # ジャンプ中の画像
-            self.image = pg.transform.flip(self.__imgs[3], self.__isLeft, False)
+        if self.is_big():
+            # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
+            if not self.__on_ground and not self.on_block:
+                # ジャンプ中の画像
+                self.image = pg.transform.flip(self.__big_imgs[3], self.__isLeft, False)
+            else:
+                # 歩行アニメーションの画像
+                self.image = pg.transform.flip(
+                    self.__big_imgs[self.WALK_ANIME_INDEX[self.__walkIndex % 9]],
+                    self.__isLeft,
+                    False)
         else:
-            # 歩行アニメーションの画像
-            self.image = pg.transform.flip(
-                self.__imgs[self.WALK_ANIME_INDEX[self.__walkIndex % 9]],
-                self.__isLeft,
-                False)
+            # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
+            if not self.__on_ground and not self.on_block:
+                # ジャンプ中の画像
+                self.image = pg.transform.flip(self.__imgs[3], self.__isLeft, False)
+            else:
+                # 歩行アニメーションの画像
+                self.image = pg.transform.flip(
+                    self.__imgs[self.WALK_ANIME_INDEX[self.__walkIndex % 9]],
+                    self.__isLeft,
+                    False)
 
     def set_game_over(self):
         self.status = ps.DYING
@@ -183,6 +195,9 @@ class Mario(pg.sprite.Sprite):
 
     def is_dying(self):
         return self.status == ps.DYING
+
+    def is_big(self):
+        return self.status == ps.BIG
 
     def is_falling(self):
         return self.vy > 0
