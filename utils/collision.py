@@ -147,6 +147,21 @@ def item_block_collision(items, blocks):
                             item.rect.left = block.rect.right
                             item.vx *= -1
 
+def player_item_collision(player, items):
+    '''
+    マリオとアイテムの衝突判定
+
+    Args:
+        player: プレイヤーオブジェクト
+        items: アイテムオブジェクト
+    '''
+    for item in items:
+        if item.active:
+            continue
+
+        if player.rect.colliderect(item.rect):
+            item.kill()
+
 def is_touching_block_below(target_rect, tile_size, block_map):
     '''
     targetが下のブロックに触れているかを確認
