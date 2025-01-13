@@ -27,6 +27,8 @@ class Mario(pg.sprite.Sprite):
         self.__status = ps.NORMAL
         # マリオGameOver時のアニメカウンター
         self.__dead_animeCounter = 0
+        # 成長段階を管理
+        self.__growth_stage = 0
 
         # 画像をリストで保持
         self.__imgs = [
@@ -35,6 +37,19 @@ class Mario(pg.sprite.Sprite):
             pg.image.load('images/mario_003.png'),
             pg.image.load('images/mario_004.png'),
             pg.image.load('images/mario_005.png')
+        ]
+
+        self.__middle_imgs = [
+            pg.image.load('images/middle_mario_001.png')
+        ]
+
+        self.__big_imgs = [
+            pg.image.load('images/big_mario_001.png'),
+            pg.image.load('images/big_mario_002.png'),
+            pg.image.load('images/big_mario_003.png'),
+            pg.image.load('images/big_mario_004.png'),
+            pg.image.load('images/big_mario_005.png'),
+            pg.image.load('images/big_mario_006.png')
         ]
 
         self.image = self.__imgs[0]
@@ -110,6 +125,26 @@ class Mario(pg.sprite.Sprite):
         if keys[pg.K_SPACE]:
             self.__jump()
 
+    def __handle_growth(self):
+            ''' 成長アニメーションをハンドリング '''
+            growth_sequence = [
+                self.__imgs[0],
+                self.__middle_imgs[0],
+                self.__imgs[0],
+                self.__middle_imgs[0],
+                self.__big_imgs[0],
+                self.__imgs[0],
+                self.__big_imgs[4],
+                self.__big_imgs[0]
+            ]
+
+            if self.__growth_stage < len(growth_sequence):
+                self.image = growth_sequence[self.__growth_stage]
+                self.__growth_stage += 1
+            else:
+                self.status = ps.BIG
+                self.image = self.__big_imgs[0]
+
     def __update_vertical_position(self):
         if not self.__on_ground:
             self.__apply_gravity()
@@ -164,6 +199,11 @@ class Mario(pg.sprite.Sprite):
         # ブロックから離れる
         self.on_block = False
 
+    def grow(self):
+        if self.status != ps.GROWING:
+            self.status = ps.GROWING
+            self.__growth_stage = 0
+
     def update(self, dt=0):
         # Game Over時は動かない
         if self.is_game_over():
@@ -172,6 +212,10 @@ class Mario(pg.sprite.Sprite):
         # Game Over中にアニメーションを実行
         if self.is_dying():
             self.__dying()
+            return
+
+        if self.status == ps.GROWING:
+            self.__handle_growth()
             return
 
         # キーボードの状態を取得

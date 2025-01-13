@@ -161,6 +161,7 @@ def player_item_collision(player, items):
 
         if player.rect.colliderect(item.rect):
             item.kill()
+            player.grow()
 
 def is_touching_block_below(target_rect, tile_size, block_map):
     '''
