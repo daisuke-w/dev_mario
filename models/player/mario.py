@@ -29,6 +29,7 @@ class Mario(pg.sprite.Sprite):
         self.__dead_animeCounter = 0
         # 成長段階を管理
         self.__growth_stage = 0
+        self.__growth_frame_counter = 0
 
         # 画像をリストで保持
         self.__imgs = [
@@ -141,6 +142,9 @@ class Mario(pg.sprite.Sprite):
             if self.__growth_stage < len(growth_sequence):
                 self.image = growth_sequence[self.__growth_stage]
                 self.__growth_stage += 1
+                # 大きくなった時点でサイズ変更
+                if self.__growth_stage == 5:
+                    self.__resize_for_growth(20, 32)
             else:
                 self.status = ps.BIG
                 self.image = self.__big_imgs[0]
@@ -161,6 +165,13 @@ class Mario(pg.sprite.Sprite):
                 self.__on_ground = False
             else:
                 self.leave_block()
+
+    def __resize_for_growth(self, new_width, new_height):
+        # 現在のbottom位置を保存
+        old_bottom = self.rect.bottom
+        # 新しいサイズを設定
+        self.rect.size = (new_width, new_height)
+        self.rect.bottom = old_bottom
 
     def __change_image(self):
         if self.is_big():
