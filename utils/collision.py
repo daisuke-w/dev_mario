@@ -5,6 +5,7 @@ from utils.settings import TILE_SIZE, BLOCK_MAP
 from models.enemies.nokonoko import Nokonoko
 from utils.status import NokonokoStatus as ns
 
+
 def player_enemy_collision(player, enemy):
     '''
     マリオと敵の衝突判定
@@ -85,8 +86,11 @@ def player_block_collision(group, player, blocks, items):
                 player.land_on_block(top_block.rect.top)
         # 下からの衝突（ジャンプ時）
         elif player.vy < 0:
-            player.rect.top = top_block.rect.bottom
-            player.vy = 0
+            if player.is_big() and top_block.cell_type == 2:
+                top_block.kill()
+            else:
+                player.rect.top = top_block.rect.bottom
+                player.vy = 0
             if top_block.cell_type == 3:
                 top_block.release_item(group, items, player)
         # 左右の衝突
