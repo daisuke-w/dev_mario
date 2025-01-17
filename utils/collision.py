@@ -23,7 +23,7 @@ def player_enemy_collision(player, enemy):
          # ノコノコが甲羅状態の場合
         if isinstance(enemy, Nokonoko) and enemy.status == ns.SHELL:
             # 一定時間経過後蹴る
-            if enemy.stomped_timer == 0:  
+            if enemy.stomped_timer == 0:
                 if player.rect.centerx < enemy.rect.centerx:
                     enemy.kicked('right')
                 else:
@@ -31,7 +31,7 @@ def player_enemy_collision(player, enemy):
             return
 
         if not enemy.is_stomped():
-            if player.is_falling() and player.rect.bottom <= enemy.rect.top + 5:
+            if player.is_falling() and player.rect.bottom <= enemy.rect.top + 10:
                 enemy.stomp()
             else:
                 player.set_game_over()
