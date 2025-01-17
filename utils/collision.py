@@ -87,7 +87,7 @@ def player_block_collision(group, player, blocks, items):
         # 下からの衝突（ジャンプ時）
         elif player.vy < 0:
             if player.is_big() and top_block.cell_type == 2:
-                top_block.kill()
+                top_block.break_into_fragments(group)
             else:
                 player.rect.top = top_block.rect.bottom
                 player.vy = 0
