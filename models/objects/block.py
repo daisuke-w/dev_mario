@@ -1,12 +1,15 @@
 import pygame as pg
+import random
 
 from utils.debug import debug_log
+from utils.settings import HEIGHT
 from models.objects.items.kinoko import Kinoko
 
 class Block(pg.sprite.Sprite):
     # クラス変数として画像を保持
     __imgs = {}
     __animated_imgs = {}
+    __fragment_img = None
 
     def __init__(self, x, y, cell_type, item_type=None):
         super().__init__()
@@ -49,6 +52,20 @@ class Block(pg.sprite.Sprite):
             self.cell_type = 4
             self.image = Block.__imgs[4]
 
+    def break_into_fragments(self, group):
+        # Blockを削除
+        self.kill()
+        fragments = pg.sprite.Group()
+        for _ in range(4):
+            vx = random.uniform(-3, 3)
+            vy = random.uniform(-8, -5)
+            fragment = Fragment(Block.__fragment_img, self.rect.centerx, self.rect.centery, vx, vy)
+            fragments.add(fragment)
+            group.add(fragments, layer=3)
+
+        # 破片を削除
+        fragments.empty()
+
     def update(self, dt=0):
         ''' アニメーションの更新処理 '''
         if self.cell_type in Block.__animated_imgs:
@@ -72,6 +89,7 @@ class Block(pg.sprite.Sprite):
         cls.__animated_imgs = {
             3: [load_and_scale(f'images/hatena_{i:03d}.png') for i in range(1, 4)]
         }
+        cls.__fragment_img = load_and_scale('images/block_002.png')
 
     @classmethod
     def create_blocks(cls, block_map, tile_size):
@@ -87,3 +105,21 @@ class Block(pg.sprite.Sprite):
                         block = cls(x * tile_size, y * tile_size, cell)
                     blocks.add(block)
         return blocks
+
+class Fragment(pg.sprite.Sprite):
+    def __init__(self, image, x, y, vx, vy):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect(center=(x, y))
+        self.vx = vx
+        self.vy = vy
+        self.gravity = 0.5
+
+    def update(self, dt=0):
+        self.vy += self.gravity
+        self.rect.x += self.vx
+        self.rect.y += self.vy
+
+        # 画面の高さを超えたら削除
+        if self.rect.top > HEIGHT:
+            self.kill()
