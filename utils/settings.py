@@ -11,6 +11,8 @@ BACKGROUND = (135, 206, 235) # 水色
 # フレームレート
 FRAME_RATE = 30 # 1秒間に30フレーム
 
+# 無敵継続時間
+INVINCIBILITY_DURATION = 4000
 # 甲羅スピード
 SHELL_SPEED = 5
 
