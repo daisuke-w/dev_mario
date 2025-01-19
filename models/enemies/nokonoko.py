@@ -50,8 +50,8 @@ class Nokonoko(Enemy):
         self.safe_timer = 15
 
     def update(self, dt=0):
-        # Game Over時は動かない
-        if self.player.status in { ps.DYING, ps.GAME_OVER }:
+        # 以下ステータスの時は動かない
+        if self.player.status in { ps.GROWING, ps.SHRINKING, ps.DYING, ps.GAME_OVER }:
             return
 
         # フレームカウンターを増加

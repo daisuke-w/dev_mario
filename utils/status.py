@@ -3,6 +3,9 @@ from enum import Enum, auto
 
 class PlayerStatus(Enum):
     NORMAL = auto()
+    GROWING = auto()
+    BIG = auto()
+    SHRINKING = auto()
     DYING = auto()
     GAME_OVER = auto()
 

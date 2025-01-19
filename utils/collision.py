@@ -4,6 +4,8 @@ from utils.debug import debug_log
 from utils.settings import TILE_SIZE, BLOCK_MAP
 from models.enemies.nokonoko import Nokonoko
 from utils.status import NokonokoStatus as ns
+from utils.status import PlayerStatus as ps
+
 
 def player_enemy_collision(player, enemy):
     '''
@@ -14,6 +16,10 @@ def player_enemy_collision(player, enemy):
         enemy: 敵キャラクターオブジェクト
     '''
     if pg.sprite.collide_rect(player, enemy):
+        # 無敵状態なので衝突判定を実行しない
+        if player.is_invincible:
+            return
+
         # ノコノコが甲羅状態で動いている場合
         if isinstance(enemy, Nokonoko) and enemy.status == ns.SHELL_MOVING:
             if enemy.safe_timer == 0: 
@@ -23,7 +29,7 @@ def player_enemy_collision(player, enemy):
          # ノコノコが甲羅状態の場合
         if isinstance(enemy, Nokonoko) and enemy.status == ns.SHELL:
             # 一定時間経過後蹴る
-            if enemy.stomped_timer == 0:  
+            if enemy.stomped_timer == 0:
                 if player.rect.centerx < enemy.rect.centerx:
                     enemy.kicked('right')
                 else:
@@ -31,10 +37,14 @@ def player_enemy_collision(player, enemy):
             return
 
         if not enemy.is_stomped():
-            if player.is_falling() and player.rect.bottom <= enemy.rect.top + 5:
+            if player.is_falling() and player.rect.bottom <= enemy.rect.top + 10:
                 enemy.stomp()
             else:
-                player.set_game_over()
+                if player.is_big() or player.is_shrink():
+                    player.status = ps.SHRINKING
+                    player.is_invincible = True
+                else:
+                    player.set_game_over()
 
 def enemies_collision(processed, enemy, enemies):
     '''
@@ -85,8 +95,11 @@ def player_block_collision(group, player, blocks, items):
                 player.land_on_block(top_block.rect.top)
         # 下からの衝突（ジャンプ時）
         elif player.vy < 0:
-            player.rect.top = top_block.rect.bottom
-            player.vy = 0
+            if player.is_big() and top_block.cell_type == 2:
+                top_block.break_into_fragments(group)
+            else:
+                player.rect.top = top_block.rect.bottom
+                player.vy = 0
             if top_block.cell_type == 3:
                 top_block.release_item(group, items, player)
         # 左右の衝突
@@ -146,6 +159,22 @@ def item_block_collision(items, blocks):
                         elif item.rect.left < block.rect.right and item.vx < 0:
                             item.rect.left = block.rect.right
                             item.vx *= -1
+
+def player_item_collision(player, items):
+    '''
+    マリオとアイテムの衝突判定
+
+    Args:
+        player: プレイヤーオブジェクト
+        items: アイテムオブジェクト
+    '''
+    for item in items:
+        if item.active:
+            continue
+
+        if player.rect.colliderect(item.rect):
+            item.kill()
+            player.grow()
 
 def is_touching_block_below(target_rect, tile_size, block_map):
     '''

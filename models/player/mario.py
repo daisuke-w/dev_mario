@@ -1,7 +1,7 @@
 import pygame as pg
 
 from utils.debug import debug_log
-from utils.settings import HEIGHT
+from utils.settings import HEIGHT, INVINCIBILITY_DURATION
 from utils.status import PlayerStatus as ps
 
 
@@ -13,6 +13,10 @@ class Mario(pg.sprite.Sprite):
         super().__init__()
         # 左右の向きフラグ
         self.__isLeft = False
+        # 無敵状態のフラグ
+        self.__is_invincible = False
+        # 無敵状態のタイマー
+        self.__invincibility_timer = 0
         # 歩くインデックス
         self.__walkIndex = 0
         # 初期ジャンプ速度
@@ -27,6 +31,14 @@ class Mario(pg.sprite.Sprite):
         self.__status = ps.NORMAL
         # マリオGameOver時のアニメカウンター
         self.__dead_animeCounter = 0
+        # 成長段階を管理
+        self.__growth_stage = 0
+        # フレームカウンタを増加
+        self.__growth_frame_counter = 0
+        # 縮小段階を管理
+        self.__shrink_stage = 0
+        # フレームカウンタを増加
+        self.__shrink_frame_counter = 0
 
         # 画像をリストで保持
         self.__imgs = [
@@ -35,6 +47,19 @@ class Mario(pg.sprite.Sprite):
             pg.image.load('images/mario_003.png'),
             pg.image.load('images/mario_004.png'),
             pg.image.load('images/mario_005.png')
+        ]
+
+        self.__middle_imgs = [
+            pg.image.load('images/middle_mario_001.png')
+        ]
+
+        self.__big_imgs = [
+            pg.image.load('images/big_mario_001.png'),
+            pg.image.load('images/big_mario_002.png'),
+            pg.image.load('images/big_mario_003.png'),
+            pg.image.load('images/big_mario_004.png'),
+            pg.image.load('images/big_mario_005.png'),
+            pg.image.load('images/big_mario_006.png')
         ]
 
         self.image = self.__imgs[0]
@@ -63,6 +88,14 @@ class Mario(pg.sprite.Sprite):
     @status.setter
     def status(self, value):
         self.__status = value
+
+    @property
+    def is_invincible(self):
+        return self.__is_invincible
+    
+    @is_invincible.setter
+    def is_invincible(self, value):
+        self.__is_invincible = value
 
     def __right(self):
         self.rect.x += 5
@@ -110,6 +143,59 @@ class Mario(pg.sprite.Sprite):
         if keys[pg.K_SPACE]:
             self.__jump()
 
+    def __handle_growth(self):
+            ''' 成長アニメーションをハンドリング '''
+            growth_sequence = [
+                self.__imgs[0],
+                self.__middle_imgs[0],
+                self.__imgs[0],
+                self.__middle_imgs[0],
+                self.__big_imgs[0],
+                self.__imgs[0],
+                self.__big_imgs[4],
+                self.__big_imgs[0]
+            ]
+            self.__growth_frame_counter += 1
+            # 2フレームごとに画像を切り替え
+            if self.__growth_frame_counter >= 2:
+                if self.__growth_stage < len(growth_sequence):
+                    self.image = growth_sequence[self.__growth_stage]
+                    self.__growth_stage += 1
+                    self.__growth_frame_counter = 0
+                    # 大きくなった時点でサイズ変更
+                    if self.__growth_stage == 5:
+                        self.__resize_image(20, 32)
+                else:
+                    self.status = ps.BIG
+                    self.image = self.__big_imgs[0]
+                    self.__growth_frame_counter = 0
+
+    def __handle_shrink(self):
+        ''' 縮小アニメーションをハンドリング '''
+        shrink_sequence = [
+            self.__big_imgs[0],
+            self.__middle_imgs[0],
+            self.__big_imgs[0],
+            self.__middle_imgs[0],
+            self.__imgs[0],
+            self.__big_imgs[0],
+            self.__imgs[0]
+        ]
+        self.__shrink_frame_counter += 1
+        # 4フレームごとに画像を切り替え
+        if self.__shrink_frame_counter >= 4:
+            if self.__shrink_stage < len(shrink_sequence):
+                self.image = shrink_sequence[self.__shrink_stage]
+                self.__shrink_stage += 1
+                self.__shrink_frame_counter = 0
+                # 小さくなった時点でサイズ変更
+                if self.__shrink_stage == 5:
+                    self.__resize_image(20, 20)
+            else:
+                self.status = ps.NORMAL
+                self.image = self.__imgs[0]
+                self.__shrink_frame_counter = 0
+
     def __update_vertical_position(self):
         if not self.__on_ground:
             self.__apply_gravity()
@@ -127,17 +213,39 @@ class Mario(pg.sprite.Sprite):
             else:
                 self.leave_block()
 
+    def __resize_image(self, width, height):
+        self.rect.width = width
+        self.rect.height = height
+
+    def __opacity_image(self):
+        if self.is_invincible:
+            new_image = self.image.copy()
+            new_image.set_alpha(128)
+            self.image = new_image
+
     def __change_image(self):
-        # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
-        if not self.__on_ground and not self.on_block:
-            # ジャンプ中の画像
-            self.image = pg.transform.flip(self.__imgs[3], self.__isLeft, False)
+        if self.is_big():
+            # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
+            if not self.__on_ground and not self.on_block:
+                # ジャンプ中の画像
+                self.image = pg.transform.flip(self.__big_imgs[3], self.__isLeft, False)
+            else:
+                # 歩行アニメーションの画像
+                self.image = pg.transform.flip(
+                    self.__big_imgs[self.WALK_ANIME_INDEX[self.__walkIndex % 9]],
+                    self.__isLeft,
+                    False)
         else:
-            # 歩行アニメーションの画像
-            self.image = pg.transform.flip(
-                self.__imgs[self.WALK_ANIME_INDEX[self.__walkIndex % 9]],
-                self.__isLeft,
-                False)
+            # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
+            if not self.__on_ground and not self.on_block:
+                # ジャンプ中の画像
+                self.image = pg.transform.flip(self.__imgs[3], self.__isLeft, False)
+            else:
+                # 歩行アニメーションの画像
+                self.image = pg.transform.flip(
+                    self.__imgs[self.WALK_ANIME_INDEX[self.__walkIndex % 9]],
+                    self.__isLeft,
+                    False)
 
     def set_game_over(self):
         self.status = ps.DYING
@@ -148,6 +256,12 @@ class Mario(pg.sprite.Sprite):
 
     def is_dying(self):
         return self.status == ps.DYING
+
+    def is_big(self):
+        return self.status == ps.BIG
+
+    def is_shrink(self):
+        return self.status == ps.SHRINKING
 
     def is_falling(self):
         return self.vy > 0
@@ -164,7 +278,21 @@ class Mario(pg.sprite.Sprite):
         # ブロックから離れる
         self.on_block = False
 
+    def grow(self):
+        if self.status != ps.GROWING:
+            self.status = ps.GROWING
+            self.__growth_stage = 0
+
     def update(self, dt=0):
+        # 無敵状態の処理
+        if self.is_invincible:
+            # 縮小中に透明化させるため呼び出し
+            self.__opacity_image()
+            self.__invincibility_timer += dt
+            if self.__invincibility_timer >= INVINCIBILITY_DURATION:
+                self.is_invincible = False
+                self.__invincibility_timer = 0
+
         # Game Over時は動かない
         if self.is_game_over():
             return
@@ -172,6 +300,14 @@ class Mario(pg.sprite.Sprite):
         # Game Over中にアニメーションを実行
         if self.is_dying():
             self.__dying()
+            return
+
+        if self.status == ps.GROWING:
+            self.__handle_growth()
+            return
+
+        if self.status == ps.SHRINKING:
+            self.__handle_shrink()
             return
 
         # キーボードの状態を取得
@@ -184,3 +320,7 @@ class Mario(pg.sprite.Sprite):
 
         # 動作に応じた画像に変換
         self.__change_image()
+
+        if self.is_invincible:
+            # 縮小が終わり、インターバル期間中も透明化させるため呼び出し
+            self.__opacity_image()

@@ -17,8 +17,8 @@ class Kuriboh(Enemy):
         super().__init__(images, 180, 200, 2, player)
 
     def update(self, dt=0):
-        # Game Over時は動かない
-        if self.player.status in { ps.DYING, ps.GAME_OVER }:
+        # 以下ステータスの時は動かない
+        if self.player.status in { ps.GROWING, ps.SHRINKING, ps.DYING, ps.GAME_OVER }:
             return
 
         # 踏まれた後の処理
