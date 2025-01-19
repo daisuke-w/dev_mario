@@ -16,6 +16,10 @@ def player_enemy_collision(player, enemy):
         enemy: 敵キャラクターオブジェクト
     '''
     if pg.sprite.collide_rect(player, enemy):
+        # 無敵状態なので衝突判定を実行しない
+        if player.is_invincible:
+            return
+
         # ノコノコが甲羅状態で動いている場合
         if isinstance(enemy, Nokonoko) and enemy.status == ns.SHELL_MOVING:
             if enemy.safe_timer == 0: 
@@ -38,6 +42,7 @@ def player_enemy_collision(player, enemy):
             else:
                 if player.is_big() or player.is_shrink():
                     player.status = ps.SHRINKING
+                    player.is_invincible = True
                 else:
                     player.set_game_over()
 

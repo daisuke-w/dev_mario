@@ -1,7 +1,7 @@
 import pygame as pg
 
 from utils.debug import debug_log
-from utils.settings import HEIGHT
+from utils.settings import HEIGHT, INVINCIBILITY_DURATION
 from utils.status import PlayerStatus as ps
 
 
@@ -13,6 +13,10 @@ class Mario(pg.sprite.Sprite):
         super().__init__()
         # 左右の向きフラグ
         self.__isLeft = False
+        # 無敵状態のフラグ
+        self.__is_invincible = False
+        # 無敵状態のタイマー
+        self.__invincibility_timer = 0
         # 歩くインデックス
         self.__walkIndex = 0
         # 初期ジャンプ速度
@@ -84,6 +88,14 @@ class Mario(pg.sprite.Sprite):
     @status.setter
     def status(self, value):
         self.__status = value
+
+    @property
+    def is_invincible(self):
+        return self.__is_invincible
+    
+    @is_invincible.setter
+    def is_invincible(self, value):
+        self.__is_invincible = value
 
     def __right(self):
         self.rect.x += 5
@@ -205,6 +217,12 @@ class Mario(pg.sprite.Sprite):
         self.rect.width = width
         self.rect.height = height
 
+    def __opacity_image(self):
+        if self.is_invincible:
+            new_image = self.image.copy()
+            new_image.set_alpha(128)
+            self.image = new_image
+
     def __change_image(self):
         if self.is_big():
             # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
@@ -266,6 +284,15 @@ class Mario(pg.sprite.Sprite):
             self.__growth_stage = 0
 
     def update(self, dt=0):
+        # 無敵状態の処理
+        if self.is_invincible:
+            # 縮小中に透明化させるため呼び出し
+            self.__opacity_image()
+            self.__invincibility_timer += dt
+            if self.__invincibility_timer >= INVINCIBILITY_DURATION:
+                self.is_invincible = False
+                self.__invincibility_timer = 0
+
         # Game Over時は動かない
         if self.is_game_over():
             return
@@ -293,3 +320,7 @@ class Mario(pg.sprite.Sprite):
 
         # 動作に応じた画像に変換
         self.__change_image()
+
+        if self.is_invincible:
+            # 縮小が終わり、インターバル期間中も透明化させるため呼び出し
+            self.__opacity_image()
