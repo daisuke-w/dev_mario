@@ -4,6 +4,7 @@ from utils.debug import debug_log
 from utils.settings import TILE_SIZE, BLOCK_MAP
 from models.enemies.nokonoko import Nokonoko
 from utils.status import NokonokoStatus as ns
+from utils.status import PlayerStatus as ps
 
 
 def player_enemy_collision(player, enemy):
@@ -35,7 +36,10 @@ def player_enemy_collision(player, enemy):
             if player.is_falling() and player.rect.bottom <= enemy.rect.top + 10:
                 enemy.stomp()
             else:
-                player.set_game_over()
+                if player.is_big() or player.is_shrink():
+                    player.status = ps.SHRINKING
+                else:
+                    player.set_game_over()
 
 def enemies_collision(processed, enemy, enemies):
     '''

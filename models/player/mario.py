@@ -31,6 +31,10 @@ class Mario(pg.sprite.Sprite):
         self.__growth_stage = 0
         # フレームカウンタを増加
         self.__growth_frame_counter = 0
+        # 縮小段階を管理
+        self.__shrink_stage = 0
+        # フレームカウンタを増加
+        self.__shrink_frame_counter = 0
 
         # 画像をリストで保持
         self.__imgs = [
@@ -140,18 +144,45 @@ class Mario(pg.sprite.Sprite):
                 self.__big_imgs[0]
             ]
             self.__growth_frame_counter += 1
-            if self.__growth_frame_counter >= 4:
+            # 2フレームごとに画像を切り替え
+            if self.__growth_frame_counter >= 2:
                 if self.__growth_stage < len(growth_sequence):
                     self.image = growth_sequence[self.__growth_stage]
                     self.__growth_stage += 1
                     self.__growth_frame_counter = 0
                     # 大きくなった時点でサイズ変更
                     if self.__growth_stage == 5:
-                        self.__resize_for_growth(20, 32)
+                        self.__resize_image(20, 32)
                 else:
                     self.status = ps.BIG
                     self.image = self.__big_imgs[0]
                     self.__growth_frame_counter = 0
+
+    def __handle_shrink(self):
+        ''' 縮小アニメーションをハンドリング '''
+        shrink_sequence = [
+            self.__big_imgs[0],
+            self.__middle_imgs[0],
+            self.__big_imgs[0],
+            self.__middle_imgs[0],
+            self.__imgs[0],
+            self.__big_imgs[0],
+            self.__imgs[0]
+        ]
+        self.__shrink_frame_counter += 1
+        # 4フレームごとに画像を切り替え
+        if self.__shrink_frame_counter >= 4:
+            if self.__shrink_stage < len(shrink_sequence):
+                self.image = shrink_sequence[self.__shrink_stage]
+                self.__shrink_stage += 1
+                self.__shrink_frame_counter = 0
+                # 小さくなった時点でサイズ変更
+                if self.__shrink_stage == 5:
+                    self.__resize_image(20, 20)
+            else:
+                self.status = ps.NORMAL
+                self.image = self.__imgs[0]
+                self.__shrink_frame_counter = 0
 
     def __update_vertical_position(self):
         if not self.__on_ground:
@@ -170,12 +201,9 @@ class Mario(pg.sprite.Sprite):
             else:
                 self.leave_block()
 
-    def __resize_for_growth(self, new_width, new_height):
-        # 現在のbottom位置を保存
-        old_bottom = self.rect.bottom
-        # 新しいサイズを設定
-        self.rect.size = (new_width, new_height)
-        self.rect.bottom = old_bottom
+    def __resize_image(self, width, height):
+        self.rect.width = width
+        self.rect.height = height
 
     def __change_image(self):
         if self.is_big():
@@ -214,6 +242,9 @@ class Mario(pg.sprite.Sprite):
     def is_big(self):
         return self.status == ps.BIG
 
+    def is_shrink(self):
+        return self.status == ps.SHRINKING
+
     def is_falling(self):
         return self.vy > 0
 
@@ -246,6 +277,10 @@ class Mario(pg.sprite.Sprite):
 
         if self.status == ps.GROWING:
             self.__handle_growth()
+            return
+
+        if self.status == ps.SHRINKING:
+            self.__handle_shrink()
             return
 
         # キーボードの状態を取得
