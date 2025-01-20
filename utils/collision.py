@@ -102,9 +102,10 @@ def player_block_collision(group, player, blocks, items):
                 player.vy = 0
             if top_block.cell_type == 3:
                 top_block.release_item(group, items, player)
-        # 左右の衝突
+        # 左からの衝突
         elif player.rect.right >= top_block.rect.left and player.rect.left < top_block.rect.centerx:
             player.rect.right = top_block.rect.left + 2
+        # 右からの衝突
         elif player.rect.left <= top_block.rect.right and player.rect.right > top_block.rect.centerx:
             player.rect.left = top_block.rect.right + 2
     else:

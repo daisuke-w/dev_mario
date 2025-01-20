@@ -156,8 +156,8 @@ class Mario(pg.sprite.Sprite):
                 self.__big_imgs[0]
             ]
             self.__growth_frame_counter += 1
-            # 2フレームごとに画像を切り替え
-            if self.__growth_frame_counter >= 2:
+            # 4フレームごとに画像を切り替え
+            if self.__growth_frame_counter >= 4:
                 if self.__growth_stage < len(growth_sequence):
                     self.image = growth_sequence[self.__growth_stage]
                     self.__growth_stage += 1
@@ -182,8 +182,8 @@ class Mario(pg.sprite.Sprite):
             self.__imgs[0]
         ]
         self.__shrink_frame_counter += 1
-        # 4フレームごとに画像を切り替え
-        if self.__shrink_frame_counter >= 4:
+        # 2フレームごとに画像を切り替え
+        if self.__shrink_frame_counter >= 2:
             if self.__shrink_stage < len(shrink_sequence):
                 self.image = shrink_sequence[self.__shrink_stage]
                 self.__shrink_stage += 1
