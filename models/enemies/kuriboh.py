@@ -1,5 +1,6 @@
 import pygame as pg
 
+from utils.debug import debug_log
 from utils.settings import WIDTH
 from models.enemies.enemy import Enemy
 from utils.status import PlayerStatus as ps

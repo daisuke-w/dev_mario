@@ -72,6 +72,13 @@ class Mario(pg.sprite.Sprite):
     @vy.setter
     def vy(self, value):
         self.__vy = value
+    @property
+    def on_ground(self):
+        return self.__on_ground
+    
+    @on_ground.setter
+    def on_ground(self, value):
+        self.__on_ground = value
 
     @property
     def on_block(self):
@@ -108,10 +115,10 @@ class Mario(pg.sprite.Sprite):
         self.__walkIndex += 1
 
     def __jump(self):
-        if self.__on_ground or self.on_block:
+        if self.on_ground or self.on_block:
             # ジャンプ速度をリセット
             self.vy = self.__jump_speed
-            self.__on_ground = False
+            self.on_ground = False
             self.leave_block()
 
     def __dying(self):
@@ -156,15 +163,17 @@ class Mario(pg.sprite.Sprite):
                 self.__big_imgs[0]
             ]
             self.__growth_frame_counter += 1
-            # 2フレームごとに画像を切り替え
-            if self.__growth_frame_counter >= 2:
+            # 4フレームごとに画像を切り替え
+            if self.__growth_frame_counter >= 4:
                 if self.__growth_stage < len(growth_sequence):
                     self.image = growth_sequence[self.__growth_stage]
                     self.__growth_stage += 1
                     self.__growth_frame_counter = 0
                     # 大きくなった時点でサイズ変更
-                    if self.__growth_stage == 5:
+                    if self.__growth_stage == 1:
                         self.__resize_image(20, 32)
+                        # 大きくなったサイズ分引いて調整
+                        self.rect.bottom -= 12
                 else:
                     self.status = ps.BIG
                     self.image = self.__big_imgs[0]
@@ -182,14 +191,14 @@ class Mario(pg.sprite.Sprite):
             self.__imgs[0]
         ]
         self.__shrink_frame_counter += 1
-        # 4フレームごとに画像を切り替え
-        if self.__shrink_frame_counter >= 4:
+        # 2フレームごとに画像を切り替え
+        if self.__shrink_frame_counter >= 2:
             if self.__shrink_stage < len(shrink_sequence):
                 self.image = shrink_sequence[self.__shrink_stage]
                 self.__shrink_stage += 1
                 self.__shrink_frame_counter = 0
                 # 小さくなった時点でサイズ変更
-                if self.__shrink_stage == 5:
+                if self.__shrink_stage == 1:
                     self.__resize_image(20, 20)
             else:
                 self.status = ps.NORMAL
@@ -197,19 +206,19 @@ class Mario(pg.sprite.Sprite):
                 self.__shrink_frame_counter = 0
 
     def __update_vertical_position(self):
-        if not self.__on_ground:
+        if not self.on_ground:
             self.__apply_gravity()
             # 地面に着地した場合
             if self.rect.y > 200:
                 self.vy = 0
                 self.rect.y = 200
-                self.__on_ground = True
+                self.on_ground = True
                 self.leave_block()
             # ブロックに着地した場合
             elif self.on_block:
                 self.vy = 0
                 # ブロックの上にいるが、地面ではない
-                self.__on_ground = False
+                self.on_ground = False
             else:
                 self.leave_block()
 
@@ -226,7 +235,7 @@ class Mario(pg.sprite.Sprite):
     def __change_image(self):
         if self.is_big():
             # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
-            if not self.__on_ground and not self.on_block:
+            if not self.on_ground and not self.on_block:
                 # ジャンプ中の画像
                 self.image = pg.transform.flip(self.__big_imgs[3], self.__isLeft, False)
             else:
@@ -237,7 +246,7 @@ class Mario(pg.sprite.Sprite):
                     False)
         else:
             # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
-            if not self.__on_ground and not self.on_block:
+            if not self.on_ground and not self.on_block:
                 # ジャンプ中の画像
                 self.image = pg.transform.flip(self.__imgs[3], self.__isLeft, False)
             else:
@@ -260,6 +269,9 @@ class Mario(pg.sprite.Sprite):
     def is_big(self):
         return self.status == ps.BIG
 
+    def is_growing(self):
+        return self.status == ps.GROWING
+
     def is_shrink(self):
         return self.status == ps.SHRINKING
 
@@ -271,7 +283,7 @@ class Mario(pg.sprite.Sprite):
         self.rect.bottom = top
         # 垂直速度をリセット
         self.vy = 0
-        self.__on_ground = False
+        self.on_ground = False
         self.on_block = True
 
     def leave_block(self):
@@ -302,11 +314,11 @@ class Mario(pg.sprite.Sprite):
             self.__dying()
             return
 
-        if self.status == ps.GROWING:
+        if self.is_growing():
             self.__handle_growth()
             return
 
-        if self.status == ps.SHRINKING:
+        if self.is_shrink():
             self.__handle_shrink()
             return
 
