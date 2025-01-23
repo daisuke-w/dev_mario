@@ -5,6 +5,7 @@ import time
 import utils.collision as col
 import views.render as ren
 
+from utils.debug import debug_log
 from utils.settings import BACKGROUND, FRAME_RATE
 from utils.status import PlayerStatus as ps
 from controllers.game_init import game_init
@@ -30,12 +31,15 @@ class GameController():
                 self.__running = False
 
     def __handle_collision(self):
+        # 以下ステータス時は衝突判定をスキップ
+        if self.mario.status in { ps.GROWING, ps.SHRINKING, ps.DYING, ps.GAME_OVER }:
+            return
+
         # 判定したペアを管理する為のSET
         processed = set()
         for enemy in self.enemies:
-            if not self.mario.is_dying():
-                # プレイヤーと敵キャラクターの衝突判定
-                col.player_enemy_collision(self.mario, enemy)
+            # プレイヤーと敵キャラクターの衝突判定
+            col.player_enemy_collision(self.mario, enemy)
 
             # 敵キャラクター同士の衝突判定
             col.enemies_collision(processed, enemy, self.enemies)
@@ -43,15 +47,14 @@ class GameController():
             # 敵キャラクターと壁の衝突判定
             col.enemy_block_collision(enemy, self.blocks)
 
-        if not self.mario.is_dying():
-            # プレイヤーとブロックの衝突判定
-            col.player_block_collision(self.group, self.mario, self.blocks, self.items)
+        # プレイヤーとブロックの衝突判定
+        col.player_block_collision(self.group, self.mario, self.blocks, self.items)
 
-            # アイテムとブロックの衝突判定
-            col.item_block_collision(self.items, self.blocks)
+        # アイテムとブロックの衝突判定
+        col.item_block_collision(self.items, self.blocks)
 
-            # プレイヤーとアイテムの衝突判定
-            col.player_item_collision(self.mario, self.items)
+        # プレイヤーとアイテムの衝突判定
+        col.player_item_collision(self.mario, self.items)
 
     def reset_game(self):
         self.__init_game()
