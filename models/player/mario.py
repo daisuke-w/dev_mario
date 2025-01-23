@@ -163,8 +163,10 @@ class Mario(pg.sprite.Sprite):
                     self.__growth_stage += 1
                     self.__growth_frame_counter = 0
                     # 大きくなった時点でサイズ変更
-                    if self.__growth_stage == 5:
+                    if self.__growth_stage == 1:
                         self.__resize_image(20, 32)
+                        # 大きくなったサイズ分引いて調整
+                        self.rect.bottom -= 12
                 else:
                     self.status = ps.BIG
                     self.image = self.__big_imgs[0]
@@ -189,7 +191,7 @@ class Mario(pg.sprite.Sprite):
                 self.__shrink_stage += 1
                 self.__shrink_frame_counter = 0
                 # 小さくなった時点でサイズ変更
-                if self.__shrink_stage == 5:
+                if self.__shrink_stage == 1:
                     self.__resize_image(20, 20)
             else:
                 self.status = ps.NORMAL
