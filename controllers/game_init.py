@@ -39,7 +39,7 @@ def game_init():
     nokonoko = Nokonoko(mario)
     # ブロック画像を読み込み
     Block.load_images(TILE_SIZE)
-    # ブロックを生成してグループに追加
+    # ブロックを生成
     blocks = Block.create_blocks(BLOCK_MAP, TILE_SIZE)
     # グループに追加
     group.add(mario, layer=3)
