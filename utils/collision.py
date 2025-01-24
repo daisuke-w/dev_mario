@@ -88,7 +88,7 @@ def player_block_collision(group, player, blocks, items):
     '''
     collided_blocks = pg.sprite.spritecollide(player, blocks, False)
     if collided_blocks:
-        top_block = max(collided_blocks, key=lambda block: block.rect.top)
+        top_block = min(collided_blocks, key=lambda block: block.rect.top)
         # 上からの衝突
         if player.is_falling() and player.rect.bottom <= top_block.rect.top + 12:
             if not player.on_block:
@@ -104,7 +104,7 @@ def player_block_collision(group, player, blocks, items):
                 top_block.release_item(group, items, player)
         # 左からの衝突
         elif player.rect.right >= top_block.rect.left and player.rect.left < top_block.rect.centerx:
-            player.rect.right = top_block.rect.left + 2
+            player.rect.right = top_block.rect.left - 2
         # 右からの衝突
         elif player.rect.left <= top_block.rect.right and player.rect.right > top_block.rect.centerx:
             player.rect.left = top_block.rect.right + 2
