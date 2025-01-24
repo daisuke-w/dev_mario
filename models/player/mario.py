@@ -205,13 +205,13 @@ class Mario(pg.sprite.Sprite):
                 self.image = self.__imgs[0]
                 self.__shrink_frame_counter = 0
 
-    def __update_vertical_position(self):
+    def __update_vertical_position(self, value=0):
         if not self.on_ground:
             self.__apply_gravity()
             # 地面に着地した場合
-            if self.rect.y > 200:
+            if self.rect.y > 200 - value:
                 self.vy = 0
-                self.rect.y = 200
+                self.rect.y = 200 - value
                 self.on_ground = True
                 self.leave_block()
             # ブロックに着地した場合
@@ -328,7 +328,10 @@ class Mario(pg.sprite.Sprite):
         self.__handle_jump(keys)
 
         # Y軸方向に移動
-        self.__update_vertical_position()
+        if self.is_big():
+            self.__update_vertical_position(12)
+        else:
+            self.__update_vertical_position()
 
         # 動作に応じた画像に変換
         self.__change_image()
