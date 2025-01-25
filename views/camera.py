@@ -8,11 +8,18 @@ class Camera:
         self.__height = height
         self.__offset_x = 0
         self.__offset_y = 0
+        self.__max_offset_x = 0
 
     def apply(self, object):
         # 各オブジェクトをオフセット値分ずらして描画する
         return object.rect.move(-self.__offset_x, -self.__offset_y)
 
     def update(self, player):
-        # プレイヤーがカメラの中心未満の場合はオフセット値は0
-        self.__offset_x = max(0, player.rect.centerx - self.__width // 2)
+        # プレイヤーの中心位置が画面の中央より右ならオフセットを計算
+        new_offset_x = player.rect.centerx - self.__width // 2
+
+        # オフセット値を現在到達した最右端と比較し、最大値を更新
+        self.__max_offset_x = max(self.__max_offset_x, new_offset_x)
+
+        # 現在のオフセットを最大値（右方向）に制限する
+        self.__offset_x = max(0, self.__max_offset_x)
