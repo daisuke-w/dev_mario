@@ -199,8 +199,10 @@ class Mario(pg.sprite.Sprite):
                 self.__shrink_stage += 1
                 self.__shrink_frame_counter = 0
                 # 小さくなった時点でサイズ変更
-                if self.__shrink_stage == 1:
+                if self.__shrink_stage == 6:
                     self.__resize_image(20, 20)
+                    # 大きくなっていた分足して調整
+                    self.rect.bottom += 12
             else:
                 self.status = ps.NORMAL
                 self.image = self.__imgs[0]
