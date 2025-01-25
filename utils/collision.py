@@ -41,7 +41,7 @@ def player_enemy_collision(player, enemy):
                 enemy.stomp()
             else:
                 if player.is_big() or player.is_shrink():
-                    player.status = ps.SHRINKING
+                    player.shrink()
                     player.is_invincible = True
                 else:
                     player.set_game_over()

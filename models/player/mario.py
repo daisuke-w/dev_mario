@@ -72,6 +72,7 @@ class Mario(pg.sprite.Sprite):
     @vy.setter
     def vy(self, value):
         self.__vy = value
+
     @property
     def on_ground(self):
         return self.__on_ground
@@ -198,8 +199,10 @@ class Mario(pg.sprite.Sprite):
                 self.__shrink_stage += 1
                 self.__shrink_frame_counter = 0
                 # 小さくなった時点でサイズ変更
-                if self.__shrink_stage == 1:
+                if self.__shrink_stage == 6:
                     self.__resize_image(20, 20)
+                    # 大きくなっていた分足して調整
+                    self.rect.bottom += 12
             else:
                 self.status = ps.NORMAL
                 self.image = self.__imgs[0]
@@ -294,6 +297,11 @@ class Mario(pg.sprite.Sprite):
         if self.status != ps.GROWING:
             self.status = ps.GROWING
             self.__growth_stage = 0
+
+    def shrink(self):
+        if self.status != ps.SHRINKING:
+            self.status = ps.SHRINKING
+            self.__shrink_stage = 0
 
     def update(self, dt=0):
         # 無敵状態の処理
