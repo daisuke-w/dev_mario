@@ -22,7 +22,7 @@ class GameController():
         # イベント実行フラグ
         self.__running = True
         # 各種オブジェクトを生成
-        self.win, self.clock, self.mario, self.group, self.enemies, self.blocks, self.items = game_init()
+        self.win, self.clock, self.mario, self.group, self.enemies, self.blocks, self.items, self.camera = game_init()
 
     def __handle_events(self):
         # イベント処理
@@ -77,8 +77,10 @@ class GameController():
             dt = self.clock.tick(FRAME_RATE)
             # グループの更新
             self.group.update(dt)
+            # カメラの更新 (プレイヤーに追従)
+            self.camera.update(self.mario)
             # 描画、画面更新
-            ren.render_display(self.group, self.win)
+            ren.render_display(self.group, self.win, self.camera)
 
         pg.quit()
         sys.exit()
