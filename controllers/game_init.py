@@ -5,6 +5,7 @@ from models.player.mario import Mario
 from models.enemies.kuriboh import Kuriboh
 from models.enemies.nokonoko import Nokonoko
 from models.objects.block import Block
+from views.camera import Camera
 
 
 def game_init():
@@ -23,6 +24,8 @@ def game_init():
     win = pg.display.set_mode((WIDTH, HEIGHT))
     # クロックを生成
     clock = pg.time.Clock()
+    # カメラを作成
+    camera = Camera(WIDTH, HEIGHT)
 
     # スプライトグループを定義
     group = pg.sprite.LayeredUpdates()
@@ -47,4 +50,4 @@ def game_init():
     group.add(blocks, layer=1)
     enemies.add(kuriboh, nokonoko)
 
-    return win, clock, mario, group, enemies, blocks, items
+    return win, clock, mario, group, enemies, blocks, items, camera
