@@ -6,9 +6,9 @@ import utils.collision as col
 import views.render as ren
 
 from utils.debug import debug_log
-from utils.settings import BACKGROUND, FRAME_RATE
+from utils.settings import WIDTH, HEIGHT, TILE_SIZE, BLOCK_MAP, BACKGROUND, FRAME_RATE
 from utils.status import PlayerStatus as ps
-from controllers.game_init import game_init
+from controllers.game_init import GameInit
 
 
 class GameController():
@@ -22,7 +22,17 @@ class GameController():
         # イベント実行フラグ
         self.__running = True
         # 各種オブジェクトを生成
-        self.win, self.clock, self.mario, self.group, self.enemies, self.blocks, self.items, self.camera = game_init()
+        gi = GameInit(WIDTH, HEIGHT, TILE_SIZE, BLOCK_MAP)
+        (
+            self.win,
+            self.clock,
+            self.camera,
+            self.group,
+            self.player,
+            self.enemies,
+            self.blocks,
+            self.items
+        ) = gi.execute()
 
     def __handle_events(self):
         # イベント処理
@@ -32,14 +42,14 @@ class GameController():
 
     def __handle_collision(self):
         # 以下ステータス時は衝突判定をスキップ
-        if self.mario.status in { ps.GROWING, ps.SHRINKING, ps.DYING, ps.GAME_OVER }:
+        if self.player.status in { ps.GROWING, ps.SHRINKING, ps.DYING, ps.GAME_OVER }:
             return
 
         # 判定したペアを管理する為のSET
         processed = set()
         for enemy in self.enemies:
             # プレイヤーと敵キャラクターの衝突判定
-            col.player_enemy_collision(self.mario, enemy)
+            col.player_enemy_collision(self.player, enemy)
 
             # 敵キャラクター同士の衝突判定
             col.enemies_collision(processed, enemy, self.enemies)
@@ -48,13 +58,13 @@ class GameController():
             col.enemy_block_collision(enemy, self.blocks)
 
         # プレイヤーとブロックの衝突判定
-        col.player_block_collision(self.group, self.mario, self.blocks, self.items)
+        col.player_block_collision(self.group, self.player, self.blocks, self.items)
 
         # アイテムとブロックの衝突判定
         col.item_block_collision(self.items, self.blocks)
 
         # プレイヤーとアイテムの衝突判定
-        col.player_item_collision(self.mario, self.items)
+        col.player_item_collision(self.player, self.items)
 
     def reset_game(self):
         self.__init_game()
@@ -64,7 +74,7 @@ class GameController():
             # ゲーム画面が閉じられたかどうかを判定
             self.__handle_events()
 
-            if self.mario.status == ps.GAME_OVER:
+            if self.player.status == ps.GAME_OVER:
                 time.sleep(2)
                 self.reset_game()
                 continue
@@ -78,7 +88,7 @@ class GameController():
             # グループの更新
             self.group.update(dt)
             # カメラの更新 (プレイヤーに追従)
-            self.camera.update(self.mario)
+            self.camera.update(self.player)
             # 描画、画面更新
             ren.render_display(self.group, self.win, self.camera)
 
