@@ -1,7 +1,9 @@
 import pygame as pg
 
+import utils.collision as col
+
 from utils.debug import debug_log
-from utils.settings import HEIGHT, INVINCIBILITY_DURATION
+from utils.settings import HEIGHT, INVINCIBILITY_DURATION, TILE_SIZE, BLOCK_MAP
 from utils.status import PlayerStatus as ps
 
 
@@ -209,10 +211,18 @@ class Mario(pg.sprite.Sprite):
                 self.__shrink_frame_counter = 0
 
     def __update_vertical_position(self, value=0):
+        result = col.is_touching_block_below(self.rect, TILE_SIZE, BLOCK_MAP)
+        if not result:
+            self.on_ground = False
         if not self.on_ground:
             self.__apply_gravity()
+            # 画面外に落下した場合
+            if not result:
+                if self.rect.y > HEIGHT:
+                    self.__dying()
+                return
             # 地面に着地した場合
-            if self.rect.y > 200 - value:
+            elif self.rect.y > 200 - value:
                 self.vy = 0
                 self.rect.y = 200 - value
                 self.on_ground = True
