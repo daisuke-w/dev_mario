@@ -3,8 +3,8 @@ import pygame as pg
 from utils.debug import debug_log
 from utils.settings import TILE_SIZE, BLOCK_MAP
 from models.enemies.nokonoko import Nokonoko
+from models.objects.block import Block
 from utils.status import NokonokoStatus as ns
-from utils.status import PlayerStatus as ps
 
 
 def player_enemy_collision(player, enemy):
@@ -197,5 +197,9 @@ def is_touching_block_below(target_rect, tile_size, block_map):
         for x in range(left_tile_x, right_tile_x + 1):
             if 0 <= x < len(block_map[0]):
                 if block_map[bottom_tile_y + 1][x] != 0:
-                    return True
+                    if Block.get_block(x, bottom_tile_y + 1).is_destroyed:
+                        # ブロックが破壊されている場合は何もしない
+                        continue
+                    else:
+                        return True
     return False

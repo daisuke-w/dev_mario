@@ -10,6 +10,7 @@ class Block(pg.sprite.Sprite):
     __imgs = {}
     __animated_imgs = {}
     __fragment_img = None
+    __block_dict = {}
 
     def __init__(self, x, y, cell_type, item_type=None):
         super().__init__()
@@ -18,6 +19,8 @@ class Block(pg.sprite.Sprite):
         self.item_type = item_type
         # アイテムがすでに生成されたかどうか
         self.item_released = False
+        # ブロックが破壊されたかどうか
+        self.is_destroyed = False
 
         # セルの種類に応じて画像を設定
         if cell_type in Block.__animated_imgs:
@@ -55,6 +58,7 @@ class Block(pg.sprite.Sprite):
     def break_into_fragments(self, group):
         # Blockを削除
         self.kill()
+        self.is_destroyed = True
         fragments = pg.sprite.Group()
         for _ in range(4):
             vx = random.uniform(-3, 3)
@@ -95,6 +99,7 @@ class Block(pg.sprite.Sprite):
     def create_blocks(cls, block_map, tile_size):
         ''' ブロックを配置するクラスメソッド '''
         blocks = pg.sprite.Group()
+        cls.__block_dict = {}
         for y, row in enumerate(block_map):
             for x, cell in enumerate(row):
                 # 画像が定義されているセル値のみ追加
@@ -104,7 +109,13 @@ class Block(pg.sprite.Sprite):
                     else:
                         block = cls(x * tile_size, y * tile_size, cell)
                     blocks.add(block)
+                    cls.__block_dict[(x, y)] = block
         return blocks
+
+    @classmethod
+    def get_block(cls, x, y):
+        ''' 指定した座標にあるブロックを取得 '''
+        return cls.__block_dict.get((x, y))
 
 class Fragment(pg.sprite.Sprite):
     def __init__(self, image, x, y, vx, vy):
