@@ -35,6 +35,27 @@ def handle_nokonoko_kill(enemy, other, enemies):
         enemies.remove(enemy)
         enemy.kill()
 
+def handle_block_direction(player, top_block, group, items):
+    # 上からの衝突
+    if player.is_falling() and player.rect.bottom <= top_block.rect.top + 12:
+        if not player.on_block:
+            player.land_on_block(top_block.rect.top)
+    # 下からの衝突（ジャンプ時）
+    elif player.vy < 0:
+        if player.is_big() and top_block.cell_type == 2:
+            top_block.break_into_fragments(group)
+        else:
+            player.rect.top = top_block.rect.bottom
+            player.vy = 0
+        if top_block.cell_type == 3:
+            top_block.release_item(group, items, player)
+    # 左からの衝突
+    elif player.rect.right >= top_block.rect.left and player.rect.left < top_block.rect.centerx:
+        player.rect.right = top_block.rect.left - 2
+    # 右からの衝突
+    elif player.rect.left <= top_block.rect.right and player.rect.right > top_block.rect.centerx:
+        player.rect.left = top_block.rect.right + 2
+
 def player_enemy_collision(player, enemy):
     '''
     プレイヤーと敵の衝突判定
@@ -92,27 +113,10 @@ def player_block_collision(group, player, blocks, items):
     collided_blocks = pg.sprite.spritecollide(player, blocks, False)
     if collided_blocks:
         top_block = min(collided_blocks, key=lambda block: block.rect.top)
-        # 上からの衝突
-        if player.is_falling() and player.rect.bottom <= top_block.rect.top + 12:
-            if not player.on_block:
-                player.land_on_block(top_block.rect.top)
-        # 下からの衝突（ジャンプ時）
-        elif player.vy < 0:
-            if player.is_big() and top_block.cell_type == 2:
-                top_block.break_into_fragments(group)
-            else:
-                player.rect.top = top_block.rect.bottom
-                player.vy = 0
-            if top_block.cell_type == 3:
-                top_block.release_item(group, items, player)
-        # 左からの衝突
-        elif player.rect.right >= top_block.rect.left and player.rect.left < top_block.rect.centerx:
-            player.rect.right = top_block.rect.left - 2
-        # 右からの衝突
-        elif player.rect.left <= top_block.rect.right and player.rect.right > top_block.rect.centerx:
-            player.rect.left = top_block.rect.right + 2
+        # ブロックとの衝突方向で処理分岐
+        handle_block_direction(player, top_block, group, items)
     else:
-        # マリオの下に他のブロックがない場合は `leave_block` を呼び出す
+        # プレイヤーの下に他のブロックがない場合は `leave_block` を呼び出す
         result = is_touching_block_below(player.rect, TILE_SIZE, BLOCK_MAP)
         if not result and player.on_block:
             player.leave_block()
