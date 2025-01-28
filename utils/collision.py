@@ -24,6 +24,17 @@ def handle_nokonoko_state(player, enemy):
         if enemy.safe_timer == 0: 
                 player.set_game_over()
 
+def handle_nokonoko_kill(enemy, other, enemies):
+    # ノコノコが甲羅移動中の場合
+    if isinstance(enemy, Nokonoko) and enemy.status == ns.SHELL_MOVING:
+        # 衝突相手を倒す
+        enemies.remove(other)
+        other.kill()
+    elif isinstance(other, Nokonoko) and other.status == ns.SHELL_MOVING:
+        # 自分を削除
+        enemies.remove(enemy)
+        enemy.kill()
+
 def player_enemy_collision(player, enemy):
     '''
     プレイヤーと敵の衝突判定
@@ -63,19 +74,7 @@ def enemies_collision(processed, enemy, enemies):
     for other in collided:
         # 同じ衝突ペアが複数回処理されるのを回避
         if other != enemy and (enemy, other) not in processed and (other, enemy) not in processed:
-            # ノコノコが甲羅移動中の場合
-            if isinstance(enemy, Nokonoko) and enemy.status == ns.SHELL_MOVING:
-                # 衝突相手を倒す
-                enemies.remove(other)
-                other.kill()
-                continue
-
-            if isinstance(other, Nokonoko) and other.status == ns.SHELL_MOVING:
-                # 自分を削除
-                enemies.remove(enemy)
-                enemy.kill()
-                continue
-
+            handle_nokonoko_kill(enemy, other, enemies)
             # 通常の敵同士の衝突処理
             enemy.reverse_direction()
             other.reverse_direction()
