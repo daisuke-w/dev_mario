@@ -7,9 +7,26 @@ from models.objects.block import Block
 from utils.status import NokonokoStatus as ns
 
 
+def handle_nokonoko_state(player, enemy):
+    # ノコノコが通常状態の場合
+    if enemy.status == ns.NORMAL:
+        return
+    # ノコノコが甲羅状態の場合
+    elif enemy.status == ns.SHELL:
+        # 一定時間経過後蹴る
+        if enemy.stomped_timer == 0:
+            if player.rect.centerx < enemy.rect.centerx:
+                enemy.kicked('right')
+            else:
+                enemy.kicked('left')
+    # ノコノコが甲羅状態で動いている場合
+    elif enemy.status == ns.SHELL_MOVING:
+        if enemy.safe_timer == 0: 
+                player.set_game_over()
+
 def player_enemy_collision(player, enemy):
     '''
-    マリオと敵の衝突判定
+    プレイヤーと敵の衝突判定
 
     Args:
         player: プレイヤーオブジェクト
@@ -20,21 +37,8 @@ def player_enemy_collision(player, enemy):
         if player.is_invincible:
             return
 
-        # ノコノコが甲羅状態で動いている場合
-        if isinstance(enemy, Nokonoko) and enemy.status == ns.SHELL_MOVING:
-            if enemy.safe_timer == 0: 
-                player.set_game_over()
-                return
-
-         # ノコノコが甲羅状態の場合
-        if isinstance(enemy, Nokonoko) and enemy.status == ns.SHELL:
-            # 一定時間経過後蹴る
-            if enemy.stomped_timer == 0:
-                if player.rect.centerx < enemy.rect.centerx:
-                    enemy.kicked('right')
-                else:
-                    enemy.kicked('left')
-            return
+        if isinstance(enemy, Nokonoko):
+            handle_nokonoko_state(player, enemy)
 
         if not enemy.is_stomped():
             if player.is_falling() and player.rect.bottom <= enemy.rect.top + 10:
