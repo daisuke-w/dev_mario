@@ -32,6 +32,17 @@ class Item(pg.sprite.Sprite):
         self.rect.y += self.vy
         self.vy += 1
 
+    def is_falling(self):
+        return self.vy > 0
+
+    def land_on_block(self, top):
+        # ブロックの上に乗る
+        self.rect.bottom = top
+        # 垂直速度をリセット
+        self.vy = 0
+        self.on_ground = False
+        self.on_block = True
+
     def update(self, dt=0):
         # Game Over時は動かない
         if self.player.status in { ps.DYING, ps.GAME_OVER }:

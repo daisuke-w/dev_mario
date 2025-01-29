@@ -211,7 +211,7 @@ class Mario(pg.sprite.Sprite):
                 self.__shrink_frame_counter = 0
 
     def __update_vertical_position(self, value=0):
-        result = col.is_touching_block_below(self.rect, TILE_SIZE, BLOCK_MAP)
+        result = col.is_touching_player_block_below(self, TILE_SIZE, BLOCK_MAP)
         if not result:
             self.on_ground = False
         if not self.on_ground:

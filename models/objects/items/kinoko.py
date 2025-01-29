@@ -1,7 +1,7 @@
 import pygame as pg
 
 from utils.debug import debug_log
-from utils.settings import TILE_SIZE, BLOCK_MAP
+from utils.settings import HEIGHT, TILE_SIZE, BLOCK_MAP
 from models.objects.items.item import Item
 
 import utils.collision as col
@@ -27,15 +27,13 @@ class Kinoko(Item):
             if self.initial_top - self.rect.y == self.appear_distance:
                 self.vy = 0
                 self.active = False
-                self.on_block = False
 
         # 出現アニメーション終了後の動作
         if not self.active:
             self.rect.x += self.vx
-            result = col.is_touching_block_below(self.rect, TILE_SIZE, BLOCK_MAP)
+            result = col.is_touching_item_block_below(self, TILE_SIZE, BLOCK_MAP)
             if not result and not self.on_ground:
                 self.apply_gravity()
-            if result:
-                if self.rect.y > 200:
-                    self.rect.y = 200
-                    self.on_ground = True
+                self.on_block = False
+                if self.rect.y > HEIGHT:
+                    self.kill()
