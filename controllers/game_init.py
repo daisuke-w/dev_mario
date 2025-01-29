@@ -30,8 +30,8 @@ class GameInit:
 
     def init_enemies(self, player):
         ''' 敵キャラクターを生成してグループに追加 '''
-        kuriboh = Kuriboh(player)
-        nokonoko = Nokonoko(player)
+        kuriboh = Kuriboh(180, 200, 2, player)
+        nokonoko = Nokonoko(200, 200, -2, player)
         enemies = pg.sprite.Group(kuriboh, nokonoko)
 
         return enemies

@@ -9,14 +9,14 @@ from utils.status import NokonokoStatus as ns
 
 class Nokonoko(Enemy):
     ''' ノコノコのクラス '''
-    def __init__(self, player):
+    def __init__(self, initial_x, initial_y, initial_vx, player):
         # ノコノコ用の画像、初期位置、速度を設定して親クラスを初期化
         images = [
             pg.image.load('images/nokonoko_001.png'),
             pg.image.load('images/nokonoko_002.png'),
             pg.image.load('images/nokonoko_003.png')
         ]
-        super().__init__(images, 200, 200, -2, player)
+        super().__init__(images, initial_x, initial_y, initial_vx, player)
 
         # ノコノコの状態
         self.__status = ns.NORMAL

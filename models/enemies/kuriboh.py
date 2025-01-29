@@ -8,14 +8,14 @@ from utils.status import PlayerStatus as ps
 
 class Kuriboh(Enemy):
     ''' クリボーのクラス '''
-    def __init__(self, player):
+    def __init__(self, initial_x, initial_y, initial_vx, player):
         # クリボー用の画像、初期位置、速度を設定して親クラスを初期化
         images = [
             pg.image.load('images/kuriboh_001.png'),
             pg.image.load('images/kuriboh_002.png'),
             pg.image.load('images/kuriboh_003.png')
         ]
-        super().__init__(images, 180, 200, 2, player)
+        super().__init__(images, initial_x, initial_y, initial_vx, player)
 
     def update(self, dt=0):
         # 以下ステータスの時は動かない
