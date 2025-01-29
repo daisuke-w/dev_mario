@@ -74,21 +74,21 @@ class GameController():
             # ゲーム画面が閉じられたかどうかを判定
             self.__handle_events()
 
-            if self.player.status == ps.GAME_OVER:
+            if self.player.is_game_over():
                 time.sleep(2)
                 self.reset_game()
                 continue
 
-            # 背景を水色に塗りつぶす
-            ren.render_background(self.win, BACKGROUND)
-            # 衝突判定
-            self.__handle_collision()
             # フレームレートを設定
             dt = self.clock.tick(FRAME_RATE)
+            # 衝突判定
+            self.__handle_collision()
             # グループの更新
             self.group.update(dt)
             # カメラの更新 (プレイヤーに追従)
             self.camera.update(self.player)
+            # 背景を水色に塗りつぶす
+            ren.render_background(self.win, BACKGROUND)
             # 描画、画面更新
             ren.render_display(self.group, self.win, self.camera)
 
