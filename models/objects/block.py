@@ -52,8 +52,8 @@ class Block(pg.sprite.Sprite):
 
             self.item_released = True
             # ブロックのタイプを変更し画像をアイテムリリース後にする
-            self.cell_type = 4
-            self.image = Block.__imgs[4]
+            self.cell_type = 5
+            self.image = Block.__imgs[5]
 
     def break_into_fragments(self, group):
         # Blockを削除
@@ -86,12 +86,13 @@ class Block(pg.sprite.Sprite):
             return pg.transform.scale(pg.image.load(file_path).convert_alpha(), (tile_size, tile_size))
 
         cls.__imgs = {
-            1: load_and_scale('images/wall_001.png'),
-            2: load_and_scale('images/block_001.png'),
-            4: load_and_scale('images/hatena_004.png')
+            1: load_and_scale('images/ground_001.png'),
+            2: load_and_scale('images/wall_001.png'),
+            3: load_and_scale('images/block_001.png'),
+            5: load_and_scale('images/hatena_004.png')
         }
         cls.__animated_imgs = {
-            3: [load_and_scale(f'images/hatena_{i:03d}.png') for i in range(1, 4)]
+            4: [load_and_scale(f'images/hatena_{i:03d}.png') for i in range(1, 4)]
         }
         cls.__fragment_img = load_and_scale('images/block_002.png')
 
@@ -104,7 +105,7 @@ class Block(pg.sprite.Sprite):
             for x, cell in enumerate(row):
                 # 画像が定義されているセル値のみ追加
                 if cell in cls.__imgs or cell in cls.__animated_imgs:
-                    if cell == 3:
+                    if cell == 4:
                         block = cls(x * tile_size, y * tile_size, cell, item_type='kinoko')
                     else:
                         block = cls(x * tile_size, y * tile_size, cell)
