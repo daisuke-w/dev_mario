@@ -16,6 +16,13 @@ INVINCIBILITY_DURATION = 3000
 # 甲羅スピード
 SHELL_SPEED = 5
 
+# ブロック種類
+GROUND = 1
+WALL = 2
+BLOCK = 3
+HATENA_BLOCK = 4
+HATENA_BLOCK_RELEASED = 5
+
 # ブロック配置マップ
 BLOCK_MAP = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
