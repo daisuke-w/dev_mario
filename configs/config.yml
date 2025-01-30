@@ -1,0 +1,33 @@
+# 画面回りの設定値
+display:
+  width: 320
+  height: 280
+  tile_x: 16
+  tile_y: 14
+  tile_size: 20
+  background: [135, 206, 235]         # RGB 水色
+
+# ゲーム周りの設定値
+game:
+  frame_rate: 30                      # フレームレート(1秒間に30フレーム)
+  animation_interval: 200             # アニメーション間隔
+  invincibility_duration: 3000        # 無敵状態の継続時間
+  gravity: 1                          # ゲーム内での重力値
+  walk_speed: 5                       # 歩行速度
+  jump_speed: -10                     # ジャンプ速度
+  shell_speed: 5                      # 甲羅速度
+  dead_jump_height: -12               # 死亡時に飛び上がる高さ
+  dead_anime_counter: 12              # 死亡時のカウンター上限値
+
+# ブロック周りの設定値
+block:
+  types:
+    ground: 1                         # 地面
+    wall: 2                           # 壁
+    block: 3                          # ブロック(破壊可能)
+    hatena_block: 4                   # ？ブロック
+    hatena_block_released: 5          # ？ブロック(アイテム放出済)
+
+  block_fragments:                    # ブロックの破片
+    horizontal_speed_range: [-3, 3]   # 水平方向の速度範囲
+    vertical_speed_range: [-8, -5]    # 垂直方向の速度範囲
