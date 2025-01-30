@@ -52,7 +52,7 @@ class Block(pg.sprite.Sprite):
 
             self.item_released = True
             # ブロックのタイプを変更し画像をアイテムリリース後にする
-            self.cell_type = 5
+            self.cell_type = HATENA_BLOCK_RELEASED
             self.image = Block.__imgs[HATENA_BLOCK_RELEASED]
 
     def break_into_fragments(self, group):
