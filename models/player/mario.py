@@ -216,27 +216,21 @@ class Mario(pg.sprite.Sprite):
 
     def __change_image(self):
         if self.is_big():
-            # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
-            if not self.on_ground and not self.on_block:
-                # ジャンプ中の画像
-                self.image = pg.transform.flip(self.__big_imgs[3], self.__facing_left , False)
-            else:
-                # 歩行アニメーションの画像
-                self.image = pg.transform.flip(
-                    self.__big_imgs[self.WALK_ANIME_INDEX[self.__walk_index % 9]],
-                    self.__facing_left ,
-                    False)
+            self.__select_image(self.__big_imgs)
         else:
-            # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
-            if not self.on_ground and not self.on_block:
-                # ジャンプ中の画像
-                self.image = pg.transform.flip(self.__small_imgs[3], self.__facing_left , False)
-            else:
-                # 歩行アニメーションの画像
-                self.image = pg.transform.flip(
-                    self.__small_imgs[self.WALK_ANIME_INDEX[self.__walk_index % 9]],
-                    self.__facing_left ,
-                    False)
+            self.__select_image(self.__small_imgs)
+
+    def __select_image(self, images):
+        # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
+        if not self.on_ground and not self.on_block:
+            # ジャンプ中の画像
+            self.image = pg.transform.flip(images[3], self.__facing_left, False)
+        else:
+            # 歩行アニメーションの画像
+            self.image = pg.transform.flip(
+                images[self.WALK_ANIME_INDEX[self.__walk_index % len(self.WALK_ANIME_INDEX)]],
+                self.__facing_left,
+                False)
 
     def set_game_over(self):
         self.status = ps.DYING
