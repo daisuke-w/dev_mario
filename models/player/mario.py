@@ -29,28 +29,11 @@ class Mario(pg.sprite.Sprite):
         self.__shrink_frame_counter = 0 # 縮小時のアニメカウンター
 
         # 画像をリストで保持
-        self.__imgs = [
-            pg.image.load('images/mario_001.png'),
-            pg.image.load('images/mario_002.png'),
-            pg.image.load('images/mario_003.png'),
-            pg.image.load('images/mario_004.png'),
-            pg.image.load('images/mario_005.png')
-        ]
+        self.__small_imgs = [pg.image.load(f'images/small_mario_00{i}.png') for i in range(1, 6)]
+        self.__middle_imgs = [pg.image.load('images/middle_mario_001.png')]
+        self.__big_imgs = [pg.image.load(f'images/big_mario_00{i}.png') for i in range(1, 7)]
 
-        self.__middle_imgs = [
-            pg.image.load('images/middle_mario_001.png')
-        ]
-
-        self.__big_imgs = [
-            pg.image.load('images/big_mario_001.png'),
-            pg.image.load('images/big_mario_002.png'),
-            pg.image.load('images/big_mario_003.png'),
-            pg.image.load('images/big_mario_004.png'),
-            pg.image.load('images/big_mario_005.png'),
-            pg.image.load('images/big_mario_006.png')
-        ]
-
-        self.image = self.__imgs[0]
+        self.image = self.__small_imgs[0]
         self.rect = pg.Rect(50, 200, 20, 20)
 
     @property
@@ -142,12 +125,12 @@ class Mario(pg.sprite.Sprite):
     def __handle_growth(self):
             ''' 成長アニメーションをハンドリング '''
             growth_sequence = [
-                self.__imgs[0],
+                self.__small_imgs[0],
                 self.__middle_imgs[0],
-                self.__imgs[0],
+                self.__small_imgs[0],
                 self.__middle_imgs[0],
                 self.__big_imgs[0],
-                self.__imgs[0],
+                self.__small_imgs[0],
                 self.__big_imgs[4],
                 self.__big_imgs[0]
             ]
@@ -175,9 +158,9 @@ class Mario(pg.sprite.Sprite):
             self.__middle_imgs[0],
             self.__big_imgs[0],
             self.__middle_imgs[0],
-            self.__imgs[0],
+            self.__small_imgs[0],
             self.__big_imgs[0],
-            self.__imgs[0]
+            self.__small_imgs[0]
         ]
         self.__shrink_frame_counter += 1
         # 2フレームごとに画像を切り替え
@@ -193,7 +176,7 @@ class Mario(pg.sprite.Sprite):
                     self.rect.bottom += 12
             else:
                 self.status = ps.NORMAL
-                self.image = self.__imgs[0]
+                self.image = self.__small_imgs[0]
                 self.__shrink_frame_counter = 0
 
     def __update_vertical_position(self, value=0):
@@ -247,17 +230,17 @@ class Mario(pg.sprite.Sprite):
             # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
             if not self.on_ground and not self.on_block:
                 # ジャンプ中の画像
-                self.image = pg.transform.flip(self.__imgs[3], self.__facing_left , False)
+                self.image = pg.transform.flip(self.__small_imgs[3], self.__facing_left , False)
             else:
                 # 歩行アニメーションの画像
                 self.image = pg.transform.flip(
-                    self.__imgs[self.WALK_ANIME_INDEX[self.__walk_index % 9]],
+                    self.__small_imgs[self.WALK_ANIME_INDEX[self.__walk_index % 9]],
                     self.__facing_left ,
                     False)
 
     def set_game_over(self):
         self.status = ps.DYING
-        self.image = self.__imgs[4]
+        self.image = self.__small_imgs[4]
 
     def is_game_over(self):
         return self.status == ps.GAME_OVER
