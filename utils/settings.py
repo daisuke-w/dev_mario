@@ -18,8 +18,14 @@ INVINCIBILITY_DURATION = 3000
 SHELL_SPEED = 5
 # 重力
 GRAVITY = 1
+# 歩行速度
+WALK_SPEED = 5
 # ジャンプ速度
 JUMP_SPEED = -10
+# 死亡時に飛び上がる高さ
+DEAD_JUMP_HEIGHT = -12
+# 死亡時のカウンター上限値
+DEAD_ANIME_COUNTER = 12
 
 # ブロック種類
 GROUND = 1

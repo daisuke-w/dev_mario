@@ -3,7 +3,7 @@ import pygame as pg
 import utils.collision as col
 
 from utils.debug import debug_log
-from utils.settings import HEIGHT, INVINCIBILITY_DURATION, TILE_SIZE, BLOCK_MAP, JUMP_SPEED
+from utils.settings import HEIGHT, INVINCIBILITY_DURATION, TILE_SIZE, BLOCK_MAP, JUMP_SPEED, WALK_SPEED, DEAD_JUMP_HEIGHT
 from utils.status import PlayerStatus as ps
 
 
@@ -77,12 +77,12 @@ class Mario(pg.sprite.Sprite):
         self.__is_invincible = value
 
     def __right(self):
-        self.rect.x += 5
+        self.rect.x += WALK_SPEED
         self.__facing_left  = False
         self.__walk_index += 1
 
     def __left(self):
-        self.rect.x -= 5
+        self.rect.x -= WALK_SPEED
         self.__facing_left  = True
         self.__walk_index += 1
 
@@ -96,7 +96,7 @@ class Mario(pg.sprite.Sprite):
     def __dying(self):
         # Game Overになったら飛び上がる
         if self.__dead_anime_counter == 0:
-            self.vy = -12
+            self.vy = DEAD_JUMP_HEIGHT
         
         if self.__dead_anime_counter > 12:
             self.__apply_gravity()
