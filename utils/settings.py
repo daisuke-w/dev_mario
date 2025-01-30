@@ -10,11 +10,14 @@ TILE_SIZE = WIDTH // TILE_X
 BACKGROUND = (135, 206, 235) # 水色
 # フレームレート
 FRAME_RATE = 30 # 1秒間に30フレーム
-
+# アニメーション間隔
+ANIMATION_INTERVAL = 200
 # 無敵継続時間
 INVINCIBILITY_DURATION = 3000
 # 甲羅スピード
 SHELL_SPEED = 5
+# 重力
+GRAVITY = 1
 
 # ブロック種類
 GROUND = 1
@@ -40,3 +43,7 @@ BLOCK_MAP = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
+
+# ブロック破片定義
+HORIZONTAL_SPEED_RANGE = (-3, 3) # 水平方向の速度範囲
+VERTICAL_SPEED_RANGE = (-8, -5)  # 垂直方向の速度範囲

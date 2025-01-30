@@ -2,7 +2,7 @@ import pygame as pg
 import random
 
 from utils.debug import debug_log
-from utils.settings import HEIGHT, GROUND, WALL, BLOCK, HATENA_BLOCK, HATENA_BLOCK_RELEASED
+from utils.settings import HEIGHT, GROUND, WALL, BLOCK, HATENA_BLOCK, HATENA_BLOCK_RELEASED, ANIMATION_INTERVAL, GRAVITY, HORIZONTAL_SPEED_RANGE, VERTICAL_SPEED_RANGE
 from models.objects.items.kinoko import Kinoko
 
 class Block(pg.sprite.Sprite):
@@ -31,7 +31,7 @@ class Block(pg.sprite.Sprite):
             # アニメーションのタイマー
             self.animation_timer = 0
             # アニメーションフレームの切り替え間隔（ミリ秒）
-            self.animation_interval = 200
+            self.animation_interval = ANIMATION_INTERVAL
         elif cell_type in Block.__imgs:
             self.image = Block.__imgs[cell_type]
         else:
@@ -61,8 +61,8 @@ class Block(pg.sprite.Sprite):
         self.is_destroyed = True
         fragments = pg.sprite.Group()
         for _ in range(4):
-            vx = random.uniform(-3, 3)
-            vy = random.uniform(-8, -5)
+            vx = random.uniform(*HORIZONTAL_SPEED_RANGE)
+            vy = random.uniform(*VERTICAL_SPEED_RANGE)
             fragment = Fragment(Block.__fragment_img, self.rect.centerx, self.rect.centery, vx, vy)
             fragments.add(fragment)
             group.add(fragments, layer=3)
@@ -125,7 +125,7 @@ class Fragment(pg.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
         self.vx = vx
         self.vy = vy
-        self.gravity = 0.5
+        self.gravity = GRAVITY
 
     def update(self, dt=0):
         self.vy += self.gravity
