@@ -3,7 +3,7 @@ import pygame as pg
 import utils.collision as col
 
 from utils.debug import debug_log
-from utils.settings import HEIGHT, INVINCIBILITY_DURATION, TILE_SIZE, BLOCK_MAP
+from utils.settings import HEIGHT, INVINCIBILITY_DURATION, TILE_SIZE, BLOCK_MAP, JUMP_SPEED
 from utils.status import PlayerStatus as ps
 
 
@@ -13,34 +13,20 @@ class Mario(pg.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-        # 左右の向きフラグ
-        self.__isLeft = False
-        # 無敵状態のフラグ
-        self.__is_invincible = False
-        # 無敵状態のタイマー
-        self.__invincibility_timer = 0
-        # 歩くインデックス
-        self.__walkIndex = 0
-        # 初期ジャンプ速度
-        self.__jump_speed = -10
-        # Y軸方向移動距離
-        self.__vy = 0
-        # マリオが地面にいるかどうか
-        self.__on_ground = True
-        # マリオがブロックの上にいるかどうか
-        self.__on_block = False
-        # マリオの状態管理
-        self.__status = ps.NORMAL
-        # マリオGameOver時のアニメカウンター
-        self.__dead_animeCounter = 0
-        # 成長段階を管理
-        self.__growth_stage = 0
-        # フレームカウンタを増加
-        self.__growth_frame_counter = 0
-        # 縮小段階を管理
-        self.__shrink_stage = 0
-        # フレームカウンタを増加
-        self.__shrink_frame_counter = 0
+        self.__facing_left  = False     # 左向きかどうか
+        self.__is_invincible = False    # 無敵状態かどうか
+        self.__invincibility_timer = 0  # 無敵状態のタイマー
+        self.__walk_index = 0           # 歩くインデックス
+        self.__jump_speed = JUMP_SPEED  # 初期ジャンプ速度
+        self.__vy = 0                   # Y軸方向移動距離
+        self.__on_ground = True         # マリオが地面にいるかどうか
+        self.__on_block = False         # マリオがブロックの上にいるかどうか
+        self.__status = ps.NORMAL       # マリオの状態管理
+        self.__dead_anime_counter = 0   # GameOver時のアニメカウンター
+        self.__growth_stage = 0         # 成長段階を管理
+        self.__growth_frame_counter = 0 # 成長時のアニメカウンター
+        self.__shrink_stage = 0         # 縮小段階を管理
+        self.__shrink_frame_counter = 0 # 縮小時のアニメカウンター
 
         # 画像をリストで保持
         self.__imgs = [
@@ -109,13 +95,13 @@ class Mario(pg.sprite.Sprite):
 
     def __right(self):
         self.rect.x += 5
-        self.__isLeft = False
-        self.__walkIndex += 1
+        self.__facing_left  = False
+        self.__walk_index += 1
 
     def __left(self):
         self.rect.x -= 5
-        self.__isLeft = True
-        self.__walkIndex += 1
+        self.__facing_left  = True
+        self.__walk_index += 1
 
     def __jump(self):
         if self.on_ground or self.on_block:
@@ -126,10 +112,10 @@ class Mario(pg.sprite.Sprite):
 
     def __dying(self):
         # Game Overになったら飛び上がる
-        if self.__dead_animeCounter == 0:
+        if self.__dead_anime_counter == 0:
             self.vy = -12
         
-        if self.__dead_animeCounter > 12:
+        if self.__dead_anime_counter > 12:
             self.__apply_gravity()
 
         # ゲーム画面を超えたら終了
@@ -137,7 +123,7 @@ class Mario(pg.sprite.Sprite):
             self.status = ps.GAME_OVER
             return
 
-        self.__dead_animeCounter +=1
+        self.__dead_anime_counter +=1
 
     def __apply_gravity(self):
         self.rect.y += self.vy
@@ -250,23 +236,23 @@ class Mario(pg.sprite.Sprite):
             # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
             if not self.on_ground and not self.on_block:
                 # ジャンプ中の画像
-                self.image = pg.transform.flip(self.__big_imgs[3], self.__isLeft, False)
+                self.image = pg.transform.flip(self.__big_imgs[3], self.__facing_left , False)
             else:
                 # 歩行アニメーションの画像
                 self.image = pg.transform.flip(
-                    self.__big_imgs[self.WALK_ANIME_INDEX[self.__walkIndex % 9]],
-                    self.__isLeft,
+                    self.__big_imgs[self.WALK_ANIME_INDEX[self.__walk_index % 9]],
+                    self.__facing_left ,
                     False)
         else:
             # ジャンプ中はジャンプ画像を表示、それ以外は歩行アニメーションを表示
             if not self.on_ground and not self.on_block:
                 # ジャンプ中の画像
-                self.image = pg.transform.flip(self.__imgs[3], self.__isLeft, False)
+                self.image = pg.transform.flip(self.__imgs[3], self.__facing_left , False)
             else:
                 # 歩行アニメーションの画像
                 self.image = pg.transform.flip(
-                    self.__imgs[self.WALK_ANIME_INDEX[self.__walkIndex % 9]],
-                    self.__isLeft,
+                    self.__imgs[self.WALK_ANIME_INDEX[self.__walk_index % 9]],
+                    self.__facing_left ,
                     False)
 
     def set_game_over(self):

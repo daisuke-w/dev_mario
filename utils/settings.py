@@ -18,6 +18,8 @@ INVINCIBILITY_DURATION = 3000
 SHELL_SPEED = 5
 # 重力
 GRAVITY = 1
+# ジャンプ速度
+JUMP_SPEED = -10
 
 # ブロック種類
 GROUND = 1
