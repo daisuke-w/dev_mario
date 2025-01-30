@@ -1,5 +1,6 @@
 import pygame as pg
 
+from configs.config_manager import ConfigManager as cm
 from models.player.mario import Mario
 from models.enemies.kuriboh import Kuriboh
 from models.enemies.nokonoko import Nokonoko
@@ -16,6 +17,7 @@ class GameInit:
         self.__camera = None
         self.__win = None
         self.__clock = None
+        cm.load_config('.\configs\config.yml')
 
     def init_screen(self):
         ''' 画面、カメラ、クロックを初期化 '''
