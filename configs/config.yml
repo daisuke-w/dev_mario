@@ -18,6 +18,7 @@ game:
   shell_speed: 5                      # 甲羅速度
   dead_jump_height: -12               # 死亡時に飛び上がる高さ
   dead_anime_counter: 12              # 死亡時のカウンター上限値
+  disappear_delay: 15                 # 踏まれた後消えるまでの時間（フレーム数）
 
 # ブロック周りの設定値
 block:

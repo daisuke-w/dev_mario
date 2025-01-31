@@ -19,6 +19,7 @@ class GameConfig(BaseModel):
     shell_speed: int
     dead_jump_height: int
     dead_anime_counter: int
+    disappear_delay: int
 
 class BlockTypesConfig(BaseModel):
     ground: int
