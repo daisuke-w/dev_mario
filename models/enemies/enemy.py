@@ -1,6 +1,7 @@
 import pygame as pg
 
 from configs.config_manager import ConfigManager as cm
+from utils.status import PlayerStatus as ps
 
 
 class Enemy(pg.sprite.Sprite):
@@ -34,3 +35,27 @@ class Enemy(pg.sprite.Sprite):
 
     def reverse_direction(self):
         self.vx *= -1
+
+    def check_status(self):
+        return self.player.status in {
+            ps.GROWING,
+            ps.SHRINKING,
+            ps.DYING,
+            ps.GAME_OVER
+            }
+
+    def check_screen_boundaries(self):
+        if self.rect.x <= 0 or self.rect.x >= self.dis_conf.width - self.rect.width:
+            self.reverse_direction()
+
+    def update_common(self):
+        # 停止するステータスの確認
+        if self.check_status():
+            return
+        if not self.is_stomped():
+            # X方向に移動
+            self.rect.x += self.vx
+        # self.rect.x += self.vx
+        self.frame_counter += 1
+        # 画面端にきたら反転
+        self.check_screen_boundaries()
