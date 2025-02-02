@@ -52,10 +52,11 @@ class Enemy(pg.sprite.Sprite):
         # 停止するステータスの確認
         if self.check_status():
             return
+        # 踏まれていない場合は横移動
         if not self.is_stomped():
             # X方向に移動
             self.rect.x += self.vx
-        # self.rect.x += self.vx
+
         self.frame_counter += 1
         # 画面端にきたら反転
         self.check_screen_boundaries()
