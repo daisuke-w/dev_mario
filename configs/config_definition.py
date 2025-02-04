@@ -20,6 +20,8 @@ class GameConfig(BaseModel):
     dead_jump_height: int
     dead_anime_counter: int
     disappear_delay: int
+    stomped_timer: int
+    safe_timer: int
 
 class BlockTypesConfig(BaseModel):
     ground: int

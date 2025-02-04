@@ -19,6 +19,8 @@ game:
   dead_jump_height: -12               # 死亡時に飛び上がる高さ
   dead_anime_counter: 12              # 死亡時のカウンター上限値
   disappear_delay: 15                 # 踏まれた後消えるまでの時間（フレーム数）
+  stomped_timer: 15                   # 踏まれてから次のアクションへ移行するまでの猶予時間
+  safe_timer: 15                      # キックしてから次のアクションへ移行するまでの猶予時間
 
 # ブロック周りの設定値
 block:
