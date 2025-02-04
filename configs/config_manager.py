@@ -16,12 +16,15 @@ class ConfigManager:
 
     @staticmethod
     def get_display():
+        ''' display用の設定値を取得する '''
         return ConfigManager._config.display
 
     @staticmethod
     def get_game():
+        ''' game用の設定値を取得する '''
         return ConfigManager._config.game
 
     @staticmethod
     def get_block():
+        ''' block用の設定値を取得する '''
         return ConfigManager._config.block
