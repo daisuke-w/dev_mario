@@ -5,10 +5,11 @@ import time
 import utils.collision as col
 import views.render as ren
 
-from utils.debug import debug_log
-from utils.settings import WIDTH, HEIGHT, TILE_SIZE, BLOCK_MAP, BACKGROUND, FRAME_RATE
-from utils.status import PlayerStatus as ps
+from configs.config_manager import ConfigManager as cm
 from controllers.game_init import GameInit
+from utils.debug import debug_log
+from utils.settings import BLOCK_MAP
+from utils.status import PlayerStatus as ps
 
 
 class GameController():
@@ -19,19 +20,30 @@ class GameController():
     def __init_game(self):
         # Pygameの初期化
         pg.init()
-        # イベント実行フラグ
-        self.__running = True
+        # 設定ファイル読み込み
+        cm.load_config('.\configs\config.yml')
+        self.dc = cm.get_display()
+        self.gc = cm.get_game()
+        
+        self.__running = True                           # イベント実行フラグ
+        self.__width = self.dc.width              # 画面横サイズ
+        self.__height = self.dc.height            # 画面縦サイズ
+        self.__tile_size = self.dc.tile_size      # 画面タイルサイズ
+        self.__background = self.dc.background    # 背景
+        self.__frame_rate = self.gc.frame_rate   # フレームレート
+
         # 各種オブジェクトを生成
-        gi = GameInit(WIDTH, HEIGHT, TILE_SIZE, BLOCK_MAP)
-        (
-            self.win,
-            self.clock,
-            self.camera,
-            self.group,
-            self.player,
-            self.enemies,
-            self.blocks,
-            self.items
+        gi = GameInit(self.__width, self.__height, self.__tile_size, BLOCK_MAP)
+
+        # Game要素初期化
+        (self.win,
+         self.clock,
+         self.camera,
+         self.group,
+         self.player,
+         self.enemies,
+         self.blocks,
+         self.items
         ) = gi.execute()
 
     def __handle_events(self):
@@ -80,7 +92,7 @@ class GameController():
                 continue
 
             # フレームレートを設定
-            dt = self.clock.tick(FRAME_RATE)
+            dt = self.clock.tick(self.__frame_rate)
             # 衝突判定
             self.__handle_collision()
             # グループの更新
@@ -88,7 +100,7 @@ class GameController():
             # カメラの更新 (プレイヤーに追従)
             self.camera.update(self.player)
             # 背景を水色に塗りつぶす
-            ren.render_background(self.win, BACKGROUND)
+            ren.render_background(self.win, self.__background)
             # 描画、画面更新
             ren.render_display(self.group, self.win, self.camera)
 

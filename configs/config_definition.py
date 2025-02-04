@@ -22,6 +22,7 @@ class GameConfig(BaseModel):
     disappear_delay: int
     stomped_timer: int
     safe_timer: int
+    appear_distance: int
 
 class BlockTypesConfig(BaseModel):
     ground: int

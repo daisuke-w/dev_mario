@@ -1,10 +1,10 @@
 import pygame as pg
 
-from utils.debug import debug_log
-from utils.settings import TILE_SIZE, BLOCK_MAP
+from configs.config_manager import ConfigManager as cm
 from models.enemies.nokonoko import Nokonoko
-from models.objects.items.kinoko import Kinoko
 from models.objects.block import Block
+from utils.debug import debug_log
+from utils.settings import BLOCK_MAP
 from utils.status import NokonokoStatus as ns
 
 
@@ -128,13 +128,14 @@ def player_block_collision(group, player, blocks, items):
         blocks: 衝突判定を行うブロックグループ
     '''
     collided_blocks = pg.sprite.spritecollide(player, blocks, False)
+    gc = cm.get_display()
     if collided_blocks:
         top_block = min(collided_blocks, key=lambda block: block.rect.top)
         # ブロックとの衝突方向で処理分岐
         handle_block_direction(player, top_block, group, items)
     else:
         # プレイヤーの下に他のブロックがない場合は `leave_block` を呼び出す
-        result = is_touching_player_block_below(player, TILE_SIZE, BLOCK_MAP)
+        result = is_touching_player_block_below(player, gc.tile_size, BLOCK_MAP)
         if not result and player.on_block:
             player.leave_block()
 

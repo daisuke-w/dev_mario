@@ -1,9 +1,10 @@
 import pygame as pg
 import random
 
-from utils.debug import debug_log
-from utils.settings import HEIGHT, GROUND, WALL, BLOCK, HATENA_BLOCK, HATENA_BLOCK_RELEASED, ANIMATION_INTERVAL, GRAVITY, HORIZONTAL_SPEED_RANGE, VERTICAL_SPEED_RANGE
+from configs.config_manager import ConfigManager as cm
 from models.objects.items.kinoko import Kinoko
+from utils.debug import debug_log
+
 
 class Block(pg.sprite.Sprite):
     # クラス変数として画像を保持
@@ -14,28 +15,27 @@ class Block(pg.sprite.Sprite):
 
     def __init__(self, x, y, cell_type, item_type=None):
         super().__init__()
-        self.cell_type = cell_type
-        # アイテムの種類
-        self.item_type = item_type
-        # アイテムがすでに生成されたかどうか
-        self.item_released = False
-        # ブロックが破壊されたかどうか
-        self.is_destroyed = False
+        self.gc = cm.get_game()
+        self.bt = cm.get_block().types
+        # 破片の設定値
+        self.fragments = cm.get_block().block_fragments
+
+        self.cell_type = cell_type                        # セルの種類
+        self.item_type = item_type                        # アイテムの種類
+        self.is_released = False                          # アイテムが生成されたかどうか
+        self.is_destroyed = False                         # ブロックが破壊されたかどうか
 
         # セルの種類に応じて画像を設定
-        if cell_type in Block.__animated_imgs:
-            self.frames = Block.__animated_imgs[cell_type]
+        if self.cell_type in Block.__animated_imgs:
+            self.frames = Block.__animated_imgs[self.cell_type]
             self.image = self.frames[0]
-            # アニメーションフレーム
-            self.current_frame = 0
-            # アニメーションのタイマー
-            self.animation_timer = 0
-            # アニメーションフレームの切り替え間隔（ミリ秒）
-            self.animation_interval = ANIMATION_INTERVAL
-        elif cell_type in Block.__imgs:
-            self.image = Block.__imgs[cell_type]
+            self.current_frame = 0                                       # アニメーションフレーム
+            self.animation_timer = 0                                     # アニメーションのタイマー
+            self.animation_interval = self.gc.animation_interval  # アニメーション間隔
+        elif self.cell_type in Block.__imgs:
+            self.image = Block.__imgs[self.cell_type]
         else:
-            raise ValueError(f"Invalid cell type: {cell_type}")
+            raise ValueError(f"Invalid cell type: {self.cell_type}")
 
         # 位置を設定
         self.rect = self.image.get_rect()
@@ -43,17 +43,17 @@ class Block(pg.sprite.Sprite):
 
     def release_item(self, group, items, player):
         ''' ブロックを叩いてアイテムを生成 '''
-        if not self.item_released and self.item_type is not None:
+        if not self.is_released and self.item_type is not None:
             if self.item_type == 'kinoko':
                 item = Kinoko(self.rect.left, self.rect.top, player)
                 item.initial_top = self.rect.top
                 items.add(item)
                 group.add(items, layer=0)
 
-            self.item_released = True
+            self.is_released = True
             # ブロックのタイプを変更し画像をアイテムリリース後にする
-            self.cell_type = HATENA_BLOCK_RELEASED
-            self.image = Block.__imgs[HATENA_BLOCK_RELEASED]
+            self.cell_type = self.bt.hatena_block_released
+            self.image = Block.__imgs[self.bt.hatena_block_released]
 
     def break_into_fragments(self, group):
         # Blockを削除
@@ -61,8 +61,8 @@ class Block(pg.sprite.Sprite):
         self.is_destroyed = True
         fragments = pg.sprite.Group()
         for _ in range(4):
-            vx = random.uniform(*HORIZONTAL_SPEED_RANGE)
-            vy = random.uniform(*VERTICAL_SPEED_RANGE)
+            vx = random.uniform(*self.fragments.horizontal_speed_range)
+            vy = random.uniform(*self.fragments.vertical_speed_range)
             fragment = Fragment(Block.__fragment_img, self.rect.centerx, self.rect.centery, vx, vy)
             fragments.add(fragment)
             group.add(fragments, layer=3)
@@ -82,17 +82,20 @@ class Block(pg.sprite.Sprite):
     @classmethod
     def load_images(cls, tile_size):
         ''' ブロック画像を読み込んでクラス変数に設定 '''
+
+        bt = cm.get_block().types
+
         def load_and_scale(file_path):
             return pg.transform.scale(pg.image.load(file_path).convert_alpha(), (tile_size, tile_size))
 
         cls.__imgs = {
-            GROUND: load_and_scale('images/ground_001.png'),
-            WALL: load_and_scale('images/wall_001.png'),
-            BLOCK: load_and_scale('images/block_001.png'),
-            HATENA_BLOCK_RELEASED: load_and_scale('images/hatena_004.png')
+            bt.ground: load_and_scale('images/ground_001.png'),
+            bt.wall: load_and_scale('images/wall_001.png'),
+            bt.block: load_and_scale('images/block_001.png'),
+            bt.hatena_block_released: load_and_scale('images/hatena_004.png')
         }
         cls.__animated_imgs = {
-            HATENA_BLOCK: [load_and_scale(f'images/hatena_{i:03d}.png') for i in range(1, 4)]
+            bt.hatena_block: [load_and_scale(f'images/hatena_{i:03d}.png') for i in range(1, 4)]
         }
         cls.__fragment_img = load_and_scale('images/block_002.png')
 
@@ -101,11 +104,12 @@ class Block(pg.sprite.Sprite):
         ''' ブロックを配置するクラスメソッド '''
         blocks = pg.sprite.Group()
         cls.__block_dict = {}
+        bt = cm.get_block().types
         for y, row in enumerate(block_map):
             for x, cell in enumerate(row):
                 # 画像が定義されているセル値のみ追加
                 if cell in cls.__imgs or cell in cls.__animated_imgs:
-                    if cell == HATENA_BLOCK:
+                    if cell == bt.hatena_block:
                         block = cls(x * tile_size, y * tile_size, cell, item_type='kinoko')
                     else:
                         block = cls(x * tile_size, y * tile_size, cell)
@@ -121,11 +125,14 @@ class Block(pg.sprite.Sprite):
 class Fragment(pg.sprite.Sprite):
     def __init__(self, image, x, y, vx, vy):
         super().__init__()
+        self.dc = cm.get_display()
+        self.gc = cm.get_game()
+
         self.image = image
         self.rect = self.image.get_rect(center=(x, y))
         self.vx = vx
         self.vy = vy
-        self.gravity = GRAVITY
+        self.gravity = self.gc.gravity
 
     def update(self, dt=0):
         self.vy += self.gravity
@@ -133,5 +140,5 @@ class Fragment(pg.sprite.Sprite):
         self.rect.y += self.vy
 
         # 画面の高さを超えたら削除
-        if self.rect.top > HEIGHT:
+        if self.rect.top > self.dc.height:
             self.kill()

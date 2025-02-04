@@ -2,8 +2,9 @@ import pygame as pg
 
 import utils.collision as col
 
+from configs.config_manager import ConfigManager as cm
 from utils.debug import debug_log
-from utils.settings import HEIGHT, INVINCIBILITY_DURATION, TILE_SIZE, BLOCK_MAP, JUMP_SPEED, WALK_SPEED, DEAD_JUMP_HEIGHT
+from utils.settings import BLOCK_MAP
 from utils.status import PlayerStatus as ps
 
 
@@ -13,20 +14,23 @@ class Mario(pg.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-        self.__facing_left  = False     # 左向きかどうか
-        self.__is_invincible = False    # 無敵状態かどうか
-        self.__invincibility_timer = 0  # 無敵状態のタイマー
-        self.__walk_index = 0           # 歩くインデックス
-        self.__jump_speed = JUMP_SPEED  # 初期ジャンプ速度
-        self.__vy = 0                   # Y軸方向移動距離
-        self.__on_ground = True         # マリオが地面にいるかどうか
-        self.__on_block = False         # マリオがブロックの上にいるかどうか
-        self.__status = ps.NORMAL       # マリオの状態管理
-        self.__dead_anime_counter = 0   # GameOver時のアニメカウンター
-        self.__growth_stage = 0         # 成長段階を管理
-        self.__growth_frame_counter = 0 # 成長時のアニメカウンター
-        self.__shrink_stage = 0         # 縮小段階を管理
-        self.__shrink_frame_counter = 0 # 縮小時のアニメカウンター
+        self.dc = cm.get_display()
+        self.gc = cm.get_game()
+
+        self.__facing_left  = False             # 左向きかどうか
+        self.__is_invincible = False            # 無敵状態かどうか
+        self.__invincibility_timer = 0          # 無敵状態のタイマー
+        self.__walk_index = 0                   # 歩くインデックス
+        self.__jump_speed = self.gc.jump_speed  # 初期ジャンプ速度
+        self.__vy = 0                           # Y軸方向移動距離
+        self.__on_ground = True                 # マリオが地面にいるかどうか
+        self.__on_block = False                 # マリオがブロックの上にいるかどうか
+        self.__status = ps.NORMAL               # マリオの状態管理
+        self.__dead_anime_counter = 0           # GameOver時のアニメカウンター
+        self.__growth_stage = 0                 # 成長段階を管理
+        self.__growth_frame_counter = 0         # 成長時のアニメカウンター
+        self.__shrink_stage = 0                 # 縮小段階を管理
+        self.__shrink_frame_counter = 0         # 縮小時のアニメカウンター
 
         # 画像をリストで保持
         self.__small_imgs = [pg.image.load(f'images/small_mario_00{i}.png') for i in range(1, 6)]
@@ -77,12 +81,12 @@ class Mario(pg.sprite.Sprite):
         self.__is_invincible = value
 
     def __right(self):
-        self.rect.x += WALK_SPEED
+        self.rect.x += self.gc.walk_speed
         self.__facing_left  = False
         self.__walk_index += 1
 
     def __left(self):
-        self.rect.x -= WALK_SPEED
+        self.rect.x -= self.gc.walk_speed
         self.__facing_left  = True
         self.__walk_index += 1
 
@@ -96,13 +100,13 @@ class Mario(pg.sprite.Sprite):
     def __dying(self):
         # Game Overになったら飛び上がる
         if self.__dead_anime_counter == 0:
-            self.vy = DEAD_JUMP_HEIGHT
+            self.vy = self.gc.dead_jump_height
         
         if self.__dead_anime_counter > 12:
             self.__apply_gravity()
 
         # ゲーム画面を超えたら終了
-        if self.rect.y > HEIGHT:
+        if self.rect.y > self.dc.height:
             self.status = ps.GAME_OVER
             return
 
@@ -180,14 +184,14 @@ class Mario(pg.sprite.Sprite):
                 self.__shrink_frame_counter = 0
 
     def __update_vertical_position(self, value=0):
-        result = col.is_touching_player_block_below(self, TILE_SIZE, BLOCK_MAP)
+        result = col.is_touching_player_block_below(self, self.dc.tile_size, BLOCK_MAP)
         if not result:
             self.on_ground = False
         if not self.on_ground:
             self.__apply_gravity()
             # 画面外に落下した場合
             if not result:
-                if self.rect.y > HEIGHT:
+                if self.rect.y > self.dc.height:
                     self.__dying()
                 return
             # 地面に着地した場合
@@ -282,7 +286,7 @@ class Mario(pg.sprite.Sprite):
             # 縮小中に透明化させるため呼び出し
             self.__opacity_image()
             self.__invincibility_timer += dt
-            if self.__invincibility_timer >= INVINCIBILITY_DURATION:
+            if self.__invincibility_timer >= self.gc.invincibility_duration:
                 self.is_invincible = False
                 self.__invincibility_timer = 0
 

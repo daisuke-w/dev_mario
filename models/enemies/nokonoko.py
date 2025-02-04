@@ -1,7 +1,7 @@
 import pygame as pg
 
-from utils.debug import debug_log
 from models.enemies.enemy import Enemy
+from utils.debug import debug_log
 from utils.status import NokonokoStatus as ns
 
 
@@ -37,14 +37,14 @@ class Nokonoko(Enemy):
         super().stomp()
         self.vx = 0
         self.status = ns.SHELL
-        self.stomped_timer = self.game_conf.stomped_timer
+        self.stomped_timer = self.gc.stomped_timer
 
     def kicked(self, direction):
-        shell_speed = self.game_conf.shell_speed
+        shell_speed = self.gc.shell_speed
         self.vx = shell_speed if direction == 'right' else -shell_speed
         self.status = ns.SHELL_MOVING
         self.stomped_timer = 0
-        self.safe_timer = self.game_conf.safe_timer
+        self.safe_timer = self.gc.safe_timer
 
     def update(self, dt=0):
         # 停止するステータスの確認

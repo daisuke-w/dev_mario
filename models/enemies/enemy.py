@@ -8,18 +8,17 @@ class Enemy(pg.sprite.Sprite):
     ''' 敵キャラクターの基底クラス '''
     def __init__(self, images, initial_x, initial_y, initial_vx, player):
         super().__init__()
-        # 設定ファイル読み込み
-        self.dis_conf = cm.get_display()
-        self.game_conf = cm.get_game()
+        self.dc = cm.get_display()
+        self.gc = cm.get_game()
 
-        self.vx = initial_vx                                   # 横方向の速度
-        self.facing_left = True                                # 左向きかどうか
-        self.frame_counter = 0                                 # フレームカウンター
-        self.stomped = False                                   # 踏まれたかどうか
-        self.stomped_timer = 0                                 # 踏まれた後の経過フレーム
-        self.safe_timer = 0                                    # 衝突無効化の安全時間
-        self.disappear_delay = self.game_conf.disappear_delay  # 踏まれた後消えるまでの時間（フレーム数）
-        self.player = player                                   # プレイヤーの参照を保持
+        self.vx = initial_vx                            # 横方向の速度
+        self.facing_left = True                         # 左向きかどうか
+        self.frame_counter = 0                          # フレームカウンター
+        self.stomped = False                            # 踏まれたかどうか
+        self.stomped_timer = 0                          # 踏まれた後の経過フレーム
+        self.safe_timer = 0                             # 衝突無効化の安全時間
+        self.disappear_delay = self.gc.disappear_delay  # 踏まれた後消えるまでの時間（フレーム数）
+        self.player = player                            # プレイヤーの参照を保持
 
         # 画像をリストで保持
         self.imgs = images
@@ -45,7 +44,7 @@ class Enemy(pg.sprite.Sprite):
             }
 
     def check_screen_boundaries(self):
-        if self.rect.x <= 0 or self.rect.x >= self.dis_conf.width - self.rect.width:
+        if self.rect.x <= 0 or self.rect.x >= self.dc.width - self.rect.width:
             self.reverse_direction()
 
     def update_common(self):

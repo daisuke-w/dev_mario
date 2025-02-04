@@ -1,39 +1,3 @@
-# 画面サイズ
-WIDTH = 320
-HEIGHT = 280
-# タイル数
-TILE_X = 16
-TILE_Y = 14
-# タイルサイズを計算
-TILE_SIZE = WIDTH // TILE_X
-# 背景色
-BACKGROUND = (135, 206, 235) # 水色
-# フレームレート
-FRAME_RATE = 30 # 1秒間に30フレーム
-# アニメーション間隔
-ANIMATION_INTERVAL = 200
-# 無敵継続時間
-INVINCIBILITY_DURATION = 3000
-# 甲羅スピード
-SHELL_SPEED = 5
-# 重力
-GRAVITY = 1
-# 歩行速度
-WALK_SPEED = 5
-# ジャンプ速度
-JUMP_SPEED = -10
-# 死亡時に飛び上がる高さ
-DEAD_JUMP_HEIGHT = -12
-# 死亡時のカウンター上限値
-DEAD_ANIME_COUNTER = 12
-
-# ブロック種類
-GROUND = 1
-WALL = 2
-BLOCK = 3
-HATENA_BLOCK = 4
-HATENA_BLOCK_RELEASED = 5
-
 # ブロック配置マップ
 BLOCK_MAP = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -51,7 +15,3 @@ BLOCK_MAP = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
-
-# ブロック破片定義
-HORIZONTAL_SPEED_RANGE = (-3, 3) # 水平方向の速度範囲
-VERTICAL_SPEED_RANGE = (-8, -5)  # 垂直方向の速度範囲
