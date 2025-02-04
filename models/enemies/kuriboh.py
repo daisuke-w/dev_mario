@@ -13,6 +13,10 @@ class Kuriboh(Enemy):
         super().__init__(images, initial_x, initial_y, initial_vx, player)
 
     def update(self, dt=0):
+        # 停止するステータスの確認
+        if self.check_status():
+            return
+
         super().update_common()
 
         # 踏まれた後の処理

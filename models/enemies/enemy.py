@@ -49,9 +49,6 @@ class Enemy(pg.sprite.Sprite):
             self.reverse_direction()
 
     def update_common(self):
-        # 停止するステータスの確認
-        if self.check_status():
-            return
         # 踏まれていない場合は横移動
         if not self.is_stomped():
             # X方向に移動

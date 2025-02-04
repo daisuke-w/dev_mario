@@ -37,16 +37,20 @@ class Nokonoko(Enemy):
         super().stomp()
         self.vx = 0
         self.status = ns.SHELL
-        self.stomped_timer = 15
+        self.stomped_timer = self.game_conf.stomped_timer
 
     def kicked(self, direction):
         shell_speed = self.game_conf.shell_speed
         self.vx = shell_speed if direction == 'right' else -shell_speed
         self.status = ns.SHELL_MOVING
         self.stomped_timer = 0
-        self.safe_timer = 15
+        self.safe_timer = self.game_conf.safe_timer
 
     def update(self, dt=0):
+        # 停止するステータスの確認
+        if self.check_status():
+            return
+
         super().update_common()
 
         # ノコノコの状態に応じて分岐(通常、甲羅、蹴られた状態)
@@ -61,7 +65,7 @@ class Nokonoko(Enemy):
             if self.safe_timer > 0:
                 self.safe_timer -= 1
             return
-        if self.status == ns.NORMAL:
+        elif self.status == ns.NORMAL:
             # 一定フレームごとにアニメーション
             if self.frame_counter % 10 == 0:
                 current_img = self.frame_counter // 10 % 2
