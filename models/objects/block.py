@@ -29,8 +29,8 @@ class Block(pg.sprite.Sprite):
         if self.cell_type in Block.__animated_imgs:
             self.frames = Block.__animated_imgs[self.cell_type]
             self.image = self.frames[0]
-            self.current_frame = 0                                       # アニメーションフレーム
-            self.animation_timer = 0                                     # アニメーションのタイマー
+            self.current_frame = 0                                # アニメーションフレーム
+            self.animation_timer = 0                              # アニメーションのタイマー
             self.animation_interval = self.gc.animation_interval  # アニメーション間隔
         elif self.cell_type in Block.__imgs:
             self.image = Block.__imgs[self.cell_type]
@@ -52,8 +52,8 @@ class Block(pg.sprite.Sprite):
 
             self.is_released = True
             # ブロックのタイプを変更し画像をアイテムリリース後にする
-            self.cell_type = self.bt.hatena_block_released
-            self.image = Block.__imgs[self.bt.hatena_block_released]
+            self.cell_type = self.bt.released
+            self.image = Block.__imgs[self.bt.released]
 
     def break_into_fragments(self, group):
         # Blockを削除
@@ -92,10 +92,10 @@ class Block(pg.sprite.Sprite):
             bt.ground: load_and_scale('images/ground_001.png'),
             bt.wall: load_and_scale('images/wall_001.png'),
             bt.block: load_and_scale('images/block_001.png'),
-            bt.hatena_block_released: load_and_scale('images/hatena_004.png')
+            bt.released: load_and_scale('images/hatena_004.png')
         }
         cls.__animated_imgs = {
-            bt.hatena_block: [load_and_scale(f'images/hatena_{i:03d}.png') for i in range(1, 4)]
+            bt.hatena_kinoko: [load_and_scale(f'images/hatena_{i:03d}.png') for i in range(1, 4)]
         }
         cls.__fragment_img = load_and_scale('images/block_002.png')
 
@@ -109,7 +109,7 @@ class Block(pg.sprite.Sprite):
             for x, cell in enumerate(row):
                 # 画像が定義されているセル値のみ追加
                 if cell in cls.__imgs or cell in cls.__animated_imgs:
-                    if cell == bt.hatena_block:
+                    if cell == bt.hatena_kinoko:
                         block = cls(x * tile_size, y * tile_size, cell, item_type='kinoko')
                     else:
                         block = cls(x * tile_size, y * tile_size, cell)

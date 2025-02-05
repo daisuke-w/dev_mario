@@ -28,8 +28,8 @@ class BlockTypesConfig(BaseModel):
     ground: int
     wall: int
     block: int
-    hatena_block: int
-    hatena_block_released: int
+    released: int
+    hatena_kinoko: int
 
 class BlockFragmentsConfig(BaseModel):
     horizontal_speed_range: list[int]

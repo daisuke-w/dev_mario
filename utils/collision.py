@@ -37,18 +37,19 @@ def handle_nokonoko_kill(enemy, other, enemies):
         enemy.kill()
 
 def handle_block_direction(player, top_block, group, items):
+    bt = cm.get_block().types
     # 上からの衝突
     if player.is_falling() and player.rect.bottom <= top_block.rect.top + 12:
         if not player.on_block:
             player.land_on_block(top_block.rect.top)
     # 下からの衝突（ジャンプ時）
     elif player.vy < 0:
-        if player.is_big() and top_block.cell_type == 3:
+        if player.is_big() and top_block.cell_type == bt.block:
             top_block.break_into_fragments(group)
         else:
             player.rect.top = top_block.rect.bottom
             player.vy = 0
-        if top_block.cell_type == 4:
+        if top_block.cell_type == bt.hatena_kinoko:
             top_block.release_item(group, items, player)
     # 左からの衝突
     elif player.rect.right >= top_block.rect.left and player.rect.left < top_block.rect.centerx:

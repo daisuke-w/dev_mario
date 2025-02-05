@@ -29,8 +29,8 @@ block:
     ground: 1                         # 地面
     wall: 2                           # 壁
     block: 3                          # ブロック(破壊可能)
-    hatena_block: 4                   # ？ブロック
-    hatena_block_released: 5          # ？ブロック(アイテム放出済)
+    released: 4                       # アイテム放出済
+    hatena_kinoko: 5                  # ？ブロック(キノコ)
 
   block_fragments:                    # ブロックの破片
     horizontal_speed_range: [-3, 3]   # 水平方向の速度範囲
