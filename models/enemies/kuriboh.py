@@ -1,26 +1,23 @@
 import pygame as pg
 
 from utils.debug import debug_log
-from utils.settings import WIDTH
 from models.enemies.enemy import Enemy
-from utils.status import PlayerStatus as ps
 
 
 class Kuriboh(Enemy):
     ''' クリボーのクラス '''
-    def __init__(self, player):
-        # クリボー用の画像、初期位置、速度を設定して親クラスを初期化
-        images = [
-            pg.image.load('images/kuriboh_001.png'),
-            pg.image.load('images/kuriboh_002.png'),
-            pg.image.load('images/kuriboh_003.png')
-        ]
-        super().__init__(images, 180, 200, 2, player)
+    def __init__(self, initial_x, initial_y, initial_vx, player):
+        # クリボー用の画像
+        images = [pg.image.load(f'images/kuriboh_00{i}.png') for i in range(1, 4)]
+        # 初期位置、速度を設定して親クラスを初期化
+        super().__init__(images, initial_x, initial_y, initial_vx, player)
 
     def update(self, dt=0):
-        # 以下ステータスの時は動かない
-        if self.player.status in { ps.GROWING, ps.SHRINKING, ps.DYING, ps.GAME_OVER }:
+        # 停止するステータスの確認
+        if self.check_status():
             return
+
+        super().update_common()
 
         # 踏まれた後の処理
         if self.stomped:
@@ -30,17 +27,7 @@ class Kuriboh(Enemy):
                 self.kill()
             return
 
-        # フレームカウンターを増加
-        self.frame_counter += 1
-
         # 一定フレームごとに画像を切り替える
         if self.frame_counter % 10 == 0:
             self.image = self.imgs[self.frame_counter // 10 % 2]
 
-        # X方向に移動
-        self.rect.x += self.vx
-
-        # 画面端で反転
-        if self.rect.x <= 0 or self.rect.x >= WIDTH - self.rect.width:
-            # 方向を反転
-            self.vx = -self.vx
