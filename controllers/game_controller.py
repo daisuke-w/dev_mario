@@ -25,12 +25,12 @@ class GameController():
         self.dc = cm.get_display()
         self.gc = cm.get_game()
         
-        self.__running = True                           # イベント実行フラグ
-        self.__width = self.dc.width              # 画面横サイズ
-        self.__height = self.dc.height            # 画面縦サイズ
-        self.__tile_size = self.dc.tile_size      # 画面タイルサイズ
-        self.__background = self.dc.background    # 背景
-        self.__frame_rate = self.gc.frame_rate   # フレームレート
+        self.__running = True                   # イベント実行フラグ
+        self.__width = self.dc.width            # 画面横サイズ
+        self.__height = self.dc.height          # 画面縦サイズ
+        self.__tile_size = self.dc.tile_size    # 画面タイルサイズ
+        self.__background = self.dc.background  # 背景
+        self.__frame_rate = self.gc.frame_rate  # フレームレート
 
         # 各種オブジェクトを生成
         gi = GameInit(self.__width, self.__height, self.__tile_size, BLOCK_MAP)
