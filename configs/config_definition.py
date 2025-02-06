@@ -11,7 +11,8 @@ class DisplayConfig(BaseModel):
 
 class GameConfig(BaseModel):
     frame_rate: int
-    animation_interval: int
+    hatena_interval: int
+    coin_interval: int
     invincibility_duration: int
     gravity: int
     walk_speed: int

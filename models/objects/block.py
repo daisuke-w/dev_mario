@@ -30,9 +30,9 @@ class Block(pg.sprite.Sprite):
         if self.cell_type in Block.__animated_imgs:
             self.frames = Block.__animated_imgs[self.cell_type]
             self.image = self.frames[0]
-            self.current_frame = 0                                # アニメーションフレーム
-            self.animation_timer = 0                              # アニメーションのタイマー
-            self.animation_interval = self.gc.animation_interval  # アニメーション間隔
+            self.current_frame = 0                             # アニメーションフレーム
+            self.animation_timer = 0                           # アニメーションのタイマー
+            self.animation_interval = self.gc.hatena_interval  # アニメーション間隔
         elif self.cell_type in Block.__imgs:
             self.image = Block.__imgs[self.cell_type]
         else:

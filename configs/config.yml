@@ -10,7 +10,8 @@ display:
 # ゲーム周りの設定値
 game:
   frame_rate: 30                      # フレームレート(1秒間に30フレーム)
-  animation_interval: 200             # アニメーション間隔
+  hatena_interval: 200                # ？ブロック切替間隔
+  coin_interval: 5                    # コイン切替間隔
   invincibility_duration: 3000        # 無敵状態の継続時間
   gravity: 1                          # ゲーム内での重力値
   walk_speed: 5                       # 歩行速度
