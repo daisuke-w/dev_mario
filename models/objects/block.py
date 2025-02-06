@@ -2,6 +2,7 @@ import pygame as pg
 import random
 
 from configs.config_manager import ConfigManager as cm
+from models.objects.items.coin import Coin
 from models.objects.items.kinoko import Kinoko
 from utils.debug import debug_log
 
@@ -46,6 +47,11 @@ class Block(pg.sprite.Sprite):
         if not self.is_released and self.item_type is not None:
             if self.item_type == 'kinoko':
                 item = Kinoko(self.rect.left, self.rect.top, player)
+                item.initial_top = self.rect.top
+                items.add(item)
+                group.add(items, layer=0)
+            elif self.item_type == 'coin':
+                item = Coin(self.rect.left, self.rect.top, player)
                 item.initial_top = self.rect.top
                 items.add(item)
                 group.add(items, layer=0)
@@ -95,7 +101,8 @@ class Block(pg.sprite.Sprite):
             bt.released: load_and_scale('images/hatena_004.png')
         }
         cls.__animated_imgs = {
-            bt.hatena_kinoko: [load_and_scale(f'images/hatena_{i:03d}.png') for i in range(1, 4)]
+            bt.hatena_kinoko: [load_and_scale(f'images/hatena_{i:03d}.png') for i in range(1, 4)],
+            bt.hatena_coin: [load_and_scale(f'images/hatena_{i:03d}.png') for i in range(1, 4)]
         }
         cls.__fragment_img = load_and_scale('images/block_002.png')
 
@@ -111,6 +118,8 @@ class Block(pg.sprite.Sprite):
                 if cell in cls.__imgs or cell in cls.__animated_imgs:
                     if cell == bt.hatena_kinoko:
                         block = cls(x * tile_size, y * tile_size, cell, item_type='kinoko')
+                    elif cell == bt.hatena_coin:
+                        block = cls(x * tile_size, y * tile_size, cell, item_type='coin')
                     else:
                         block = cls(x * tile_size, y * tile_size, cell)
                     blocks.add(block)
