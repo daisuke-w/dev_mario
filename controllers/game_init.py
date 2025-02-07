@@ -30,8 +30,28 @@ class GameInit:
 
     def init_enemies(self, player):
         ''' 敵キャラクターを生成してグループに追加 '''
-        kuriboh = Kuriboh(180, 200, 2, player)
-        nokonoko = Nokonoko(200, 200, -2, player)
+        kuriboh = [
+            Kuriboh(410, 220, -2, player, self.__camera),
+            Kuriboh(610, 220, -2, player, self.__camera),
+            Kuriboh(830, 220, -2, player, self.__camera),
+            Kuriboh(860, 220, -2, player, self.__camera),
+            Kuriboh(1600, 60, -2, player, self.__camera),
+            Kuriboh(1640, 60, -2, player, self.__camera),
+            Kuriboh(1960, 220, -2, player, self.__camera),
+            Kuriboh(1985, 220, -2, player, self.__camera),
+            Kuriboh(2160, 220, -2, player, self.__camera),
+            Kuriboh(2185, 220, -2, player, self.__camera),
+            Kuriboh(2220, 220, -2, player, self.__camera),
+            Kuriboh(2245, 220, -2, player, self.__camera),
+            Kuriboh(2320, 220, -2, player, self.__camera),
+            Kuriboh(2345, 220, -2, player, self.__camera),
+            Kuriboh(3500, 220, -2, player, self.__camera),
+            Kuriboh(3525, 220, -2, player, self.__camera)
+            ]
+        nokonoko = [
+            Nokonoko(2120, 220, -2, player, self.__camera),
+            Nokonoko(3620, 120, -2, player, self.__camera)
+            ]
         enemies = pg.sprite.Group(kuriboh, nokonoko)
 
         return enemies

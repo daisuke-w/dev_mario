@@ -7,11 +7,11 @@ from utils.status import NokonokoStatus as ns
 
 class Nokonoko(Enemy):
     ''' ノコノコのクラス '''
-    def __init__(self, initial_x, initial_y, initial_vx, player):
+    def __init__(self, initial_x, initial_y, initial_vx, player, camera):
         # ノコノコ用の画像
         images = [pg.image.load(f'images/nokonoko_00{i}.png') for i in range(1, 4)]
         # 初期位置、速度を設定して親クラスを初期化
-        super().__init__(images, initial_x, initial_y, initial_vx, player)
+        super().__init__(images, initial_x, initial_y, initial_vx, player, camera)
 
         # ノコノコの初期状態
         self.__status = ns.NORMAL
