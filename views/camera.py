@@ -10,6 +10,14 @@ class Camera:
         self.__offset_y = 0
         self.__max_offset_x = 0
 
+    @property
+    def offset_x(self):
+        return self.__offset_x
+    
+    def get_viewport_bounds(self):
+        # 画面の左端と右端を取得
+        return self.__offset_x, self.__offset_x + self.__width
+
     def apply(self, object):
         # 各オブジェクトをオフセット値分ずらして描画する
         return object.rect.move(-self.__offset_x, -self.__offset_y)
