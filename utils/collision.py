@@ -49,9 +49,12 @@ def handle_block_direction(player, top_block, group, items):
         else:
             player.rect.top = top_block.rect.bottom
             player.vy = 0
+
         if top_block.cell_type == bt.hatena_kinoko:
             top_block.release_item(group, items, player)
         elif top_block.cell_type == bt.hatena_coin:
+            top_block.release_item(group, items, player)
+        elif top_block.cell_type == bt.block_coin:
             top_block.release_item(group, items, player)
     # 左からの衝突
     elif player.rect.right >= top_block.rect.left and player.rect.left < top_block.rect.centerx:
