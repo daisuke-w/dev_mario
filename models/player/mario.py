@@ -38,7 +38,7 @@ class Mario(pg.sprite.Sprite):
         self.__big_imgs = [pg.image.load(f'images/big_mario_00{i}.png') for i in range(1, 7)]
 
         self.image = self.__small_imgs[0]
-        self.rect = pg.Rect(50, 200, 20, 20)
+        self.rect = pg.Rect(50, 220, 20, 20)
 
     @property
     def vy(self):
@@ -195,9 +195,9 @@ class Mario(pg.sprite.Sprite):
                     self.__dying()
                 return
             # 地面に着地した場合
-            elif self.rect.y > 200 - value:
+            elif self.rect.y > 220 - value:
                 self.vy = 0
-                self.rect.y = 200 - value
+                self.rect.y = 220 - value
                 self.on_ground = True
                 self.leave_block()
             # ブロックに着地した場合
@@ -281,6 +281,7 @@ class Mario(pg.sprite.Sprite):
             self.__shrink_stage = 0
 
     def update(self, dt=0):
+        debug_log("mario_position", f"marioの位置：{self.rect}", interval=10)
         # 無敵状態の処理
         if self.is_invincible:
             # 縮小中に透明化させるため呼び出し

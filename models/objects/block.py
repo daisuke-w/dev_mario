@@ -21,10 +21,10 @@ class Block(pg.sprite.Sprite):
         # 破片の設定値
         self.fragments = cm.get_block().block_fragments
 
-        self.cell_type = cell_type                        # セルの種類
-        self.item_type = item_type                        # アイテムの種類
-        self.is_released = False                          # アイテムが生成されたかどうか
-        self.is_destroyed = False                         # ブロックが破壊されたかどうか
+        self.cell_type = cell_type  # セルの種類
+        self.item_type = item_type  # アイテムの種類
+        self.is_released = False    # アイテムが生成されたかどうか
+        self.is_destroyed = False   # ブロックが破壊されたかどうか
 
         # セルの種類に応じて画像を設定
         if self.cell_type in Block.__animated_imgs:

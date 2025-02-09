@@ -15,7 +15,7 @@ game:
   invincibility_duration: 3000        # 無敵状態の継続時間
   gravity: 1                          # ゲーム内での重力値
   walk_speed: 5                       # 歩行速度
-  jump_speed: -10                     # ジャンプ速度
+  jump_speed: -12                     # ジャンプ速度
   shell_speed: 5                      # 甲羅速度
   dead_jump_height: -12               # 死亡時に飛び上がる高さ
   dead_anime_counter: 12              # 死亡時のカウンター上限値

@@ -6,7 +6,7 @@ from utils.status import PlayerStatus as ps
 
 class Enemy(pg.sprite.Sprite):
     ''' 敵キャラクターの基底クラス '''
-    def __init__(self, images, initial_x, initial_y, initial_vx, player):
+    def __init__(self, images, initial_x, initial_y, initial_vx, player, camera):
         super().__init__()
         self.dc = cm.get_display()
         self.gc = cm.get_game()
@@ -19,6 +19,7 @@ class Enemy(pg.sprite.Sprite):
         self.safe_timer = 0                             # 衝突無効化の安全時間
         self.disappear_delay = self.gc.disappear_delay  # 踏まれた後消えるまでの時間（フレーム数）
         self.player = player                            # プレイヤーの参照を保持
+        self.camera = camera                            # カメラの参照を保持
 
         # 画像をリストで保持
         self.imgs = images
@@ -44,7 +45,11 @@ class Enemy(pg.sprite.Sprite):
             }
 
     def check_screen_boundaries(self):
-        if self.rect.x <= 0 or self.rect.x >= self.dc.width - self.rect.width:
+        # ✅ カメラから表示範囲（ビューポート）を取得
+        viewport_left, viewport_right = self.camera.get_viewport_bounds()
+
+        # ビューポートの境界で反転
+        if self.rect.left <= viewport_left or self.rect.right >= viewport_right:
             self.reverse_direction()
 
     def update_common(self):
