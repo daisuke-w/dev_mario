@@ -11,7 +11,8 @@ class DisplayConfig(BaseModel):
 
 class GameConfig(BaseModel):
     frame_rate: int
-    animation_interval: int
+    hatena_interval: int
+    coin_interval: int
     invincibility_duration: int
     gravity: int
     walk_speed: int
@@ -28,8 +29,10 @@ class BlockTypesConfig(BaseModel):
     ground: int
     wall: int
     block: int
-    hatena_block: int
-    hatena_block_released: int
+    released: int
+    hatena_kinoko: int
+    hatena_coin: int
+    block_coin: int
 
 class BlockFragmentsConfig(BaseModel):
     horizontal_speed_range: list[int]

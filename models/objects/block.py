@@ -2,6 +2,7 @@ import pygame as pg
 import random
 
 from configs.config_manager import ConfigManager as cm
+from models.objects.items.coin import Coin
 from models.objects.items.kinoko import Kinoko
 from utils.debug import debug_log
 
@@ -29,9 +30,9 @@ class Block(pg.sprite.Sprite):
         if self.cell_type in Block.__animated_imgs:
             self.frames = Block.__animated_imgs[self.cell_type]
             self.image = self.frames[0]
-            self.current_frame = 0                                       # アニメーションフレーム
-            self.animation_timer = 0                                     # アニメーションのタイマー
-            self.animation_interval = self.gc.animation_interval  # アニメーション間隔
+            self.current_frame = 0                             # アニメーションフレーム
+            self.animation_timer = 0                           # アニメーションのタイマー
+            self.animation_interval = self.gc.hatena_interval  # アニメーション間隔
         elif self.cell_type in Block.__imgs:
             self.image = Block.__imgs[self.cell_type]
         else:
@@ -49,11 +50,34 @@ class Block(pg.sprite.Sprite):
                 item.initial_top = self.rect.top
                 items.add(item)
                 group.add(items, layer=0)
+                self.released()
+            elif self.item_type == 'coin':
+                item = Coin(self.rect.left, self.rect.top, player)
+                item.initial_top = self.rect.top
+                items.add(item)
+                group.add(items, layer=0)
+                self.released()
+            elif self.item_type == 'block_coin':
+                if not hasattr(self, 'remaining_coins'):
+                    # デフォルトで5枚のコインを設定
+                    self.remaining_coins = 5
 
-            self.is_released = True
-            # ブロックのタイプを変更し画像をアイテムリリース後にする
-            self.cell_type = self.bt.hatena_block_released
-            self.image = Block.__imgs[self.bt.hatena_block_released]
+                if self.remaining_coins > 0:
+                    item = Coin(self.rect.left, self.rect.top, player)
+                    item.initial_top = self.rect.top
+                    items.add(item)
+                    group.add(items, layer=0)
+                    self.remaining_coins -= 1
+
+                # 全てのコインを出したらブロックを released に変更
+                if self.remaining_coins == 0:
+                    self.released()
+
+    def released(self):
+        self.is_released = True
+        # ブロックのタイプを変更し画像をアイテムリリース後にする
+        self.cell_type = self.bt.released
+        self.image = Block.__imgs[self.bt.released]
 
     def break_into_fragments(self, group):
         # Blockを削除
@@ -92,10 +116,12 @@ class Block(pg.sprite.Sprite):
             bt.ground: load_and_scale('images/ground_001.png'),
             bt.wall: load_and_scale('images/wall_001.png'),
             bt.block: load_and_scale('images/block_001.png'),
-            bt.hatena_block_released: load_and_scale('images/hatena_004.png')
+            bt.released: load_and_scale('images/hatena_004.png'),
+            bt.block_coin: load_and_scale('images/block_001.png')
         }
         cls.__animated_imgs = {
-            bt.hatena_block: [load_and_scale(f'images/hatena_{i:03d}.png') for i in range(1, 4)]
+            bt.hatena_kinoko: [load_and_scale(f'images/hatena_{i:03d}.png') for i in range(1, 4)],
+            bt.hatena_coin: [load_and_scale(f'images/hatena_{i:03d}.png') for i in range(1, 4)]
         }
         cls.__fragment_img = load_and_scale('images/block_002.png')
 
@@ -109,8 +135,12 @@ class Block(pg.sprite.Sprite):
             for x, cell in enumerate(row):
                 # 画像が定義されているセル値のみ追加
                 if cell in cls.__imgs or cell in cls.__animated_imgs:
-                    if cell == bt.hatena_block:
+                    if cell == bt.hatena_kinoko:
                         block = cls(x * tile_size, y * tile_size, cell, item_type='kinoko')
+                    elif cell == bt.hatena_coin:
+                        block = cls(x * tile_size, y * tile_size, cell, item_type='coin')
+                    elif cell == bt.block_coin:
+                        block = cls(x * tile_size, y * tile_size, cell, item_type='block_coin')
                     else:
                         block = cls(x * tile_size, y * tile_size, cell)
                     blocks.add(block)
