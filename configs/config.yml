@@ -33,6 +33,7 @@ block:
     released: 4                       # アイテム放出済
     hatena_kinoko: 5                  # ？ブロック(キノコ)
     hatena_coin: 6                    # ？ブロック(コイン)
+    block_coin: 7                     # ブロック(コイン)
 
   block_fragments:                    # ブロックの破片
     horizontal_speed_range: [-3, 3]   # 水平方向の速度範囲

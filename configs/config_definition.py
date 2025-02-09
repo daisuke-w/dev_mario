@@ -32,6 +32,7 @@ class BlockTypesConfig(BaseModel):
     released: int
     hatena_kinoko: int
     hatena_coin: int
+    block_coin: int
 
 class BlockFragmentsConfig(BaseModel):
     horizontal_speed_range: list[int]
