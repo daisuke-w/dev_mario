@@ -281,7 +281,6 @@ class Mario(pg.sprite.Sprite):
             self.__shrink_stage = 0
 
     def update(self, dt=0):
-        debug_log("mario_position", f"marioの位置：{self.rect}", interval=10)
         # 無敵状態の処理
         if self.is_invincible:
             # 縮小中に透明化させるため呼び出し
