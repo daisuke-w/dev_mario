@@ -39,7 +39,7 @@ def handle_nokonoko_kill(enemy, other, enemies):
 def handle_block_direction(player, top_block, group, items):
     bt = cm.get_block().types
     # 上からの衝突
-    if player.is_falling() and player.rect.bottom <= top_block.rect.top + 12:
+    if player.is_falling() and player.rect.bottom <= top_block.rect.top + 13:
         if not player.on_block:
             player.land_on_block(top_block.rect.top)
     # 下からの衝突（ジャンプ時）
