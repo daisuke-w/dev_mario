@@ -45,7 +45,7 @@ class Enemy(pg.sprite.Sprite):
             }
 
     def check_screen_boundaries(self):
-        # ✅ カメラから表示範囲（ビューポート）を取得
+        # カメラから表示範囲（ビューポート）を取得
         viewport_left, viewport_right = self.camera.get_viewport_bounds()
 
         # ビューポートの境界で反転
