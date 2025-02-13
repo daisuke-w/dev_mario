@@ -4,7 +4,6 @@ import utils.collision as col
 
 from models.objects.items.item import Item
 from utils.debug import debug_log
-from utils.settings import BLOCK_MAP
 from utils.status import PlayerStatus as ps
 
 
@@ -33,7 +32,7 @@ class Kinoko(Item):
         # 出現アニメーション終了後の動作
         if not self.active:
             self.rect.x += self.vx
-            result = col.is_touching_item_block_below(self, self.dc.tile_size, BLOCK_MAP)
+            result = col.is_touching_block_below(self, self.dc.tile_size)
             if not result and not self.on_ground:
                 self.apply_gravity()
                 self.on_block = False

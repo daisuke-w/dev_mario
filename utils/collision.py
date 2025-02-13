@@ -141,7 +141,7 @@ def player_block_collision(group, player, blocks, items):
         handle_block_direction(player, top_block, group, items)
     else:
         # プレイヤーの下に他のブロックがない場合は `leave_block` を呼び出す
-        result = is_touching_player_block_below(player, gc.tile_size, BLOCK_MAP)
+        result = is_touching_block_below(player, gc.tile_size)
         if not result and player.on_block:
             player.leave_block()
 
@@ -210,38 +210,21 @@ def player_item_collision(player, items):
             item.kill()
             player.grow()
 
-def is_touching_player_block_below(player, tile_size, block_map):
+def is_touching_block_below(target, tile_size):
     '''
-    プレイヤーが下のブロックに触れているかを確認
+    ターゲットが下のブロックに触れているかを確認
     '''
-    bottom_tile_y = (player.rect.bottom - 1) // tile_size
-    left_tile_x = player.rect.left // tile_size
-    right_tile_x = (player.rect.right - 1) // tile_size
+    bottom_tile_y = (target.rect.bottom - 1) // tile_size
+    left_tile_x = target.rect.left // tile_size
+    right_tile_x = (target.rect.right - 1) // tile_size
 
-    if bottom_tile_y + 1 < len(block_map):
+    if bottom_tile_y + 1 < len(BLOCK_MAP):
         for x in range(left_tile_x, right_tile_x + 1):
-            if 0 <= x < len(block_map[0]):
-                if block_map[bottom_tile_y + 1][x] != 0:
-                    if not Block.get_block(x, bottom_tile_y + 1).is_destroyed:
-                        # ブロックが破壊されていない場合
-                        return True
-    return False
-
-def is_touching_item_block_below(item, tile_size, block_map):
-    '''
-    アイテムが下のブロックに触れているかを確認
-    '''
-    bottom_tile_y = (item.rect.bottom - 1) // tile_size
-    left_tile_x = item.rect.left // tile_size
-    right_tile_x = (item.rect.right - 1) // tile_size
-
-    if bottom_tile_y + 1 < len(block_map):
-        for x in range(left_tile_x, right_tile_x + 1):
-            if 0 <= x < len(block_map[0]):
-                if block_map[bottom_tile_y + 1][x] != 0:
+            if 0 <= x < len(BLOCK_MAP[0]):
+                if BLOCK_MAP[bottom_tile_y + 1][x] != 0:
                     block = Block.get_block(x, bottom_tile_y + 1)
                     if not block.is_destroyed:
                         # ブロックが破壊されていない場合
-                        if abs(item.rect.bottom - block.rect.top) <= 2:
+                        if abs(target.rect.bottom - block.rect.top) <= 2:
                             return True
     return False
