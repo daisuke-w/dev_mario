@@ -49,6 +49,7 @@ class GameInit:
             Kuriboh(3525, 220, -2, player, self.__camera)
             ]
         nokonoko = [
+            Nokonoko(250, 120, -2, player, self.__camera),
             Nokonoko(2120, 220, -2, player, self.__camera),
             Nokonoko(3620, 120, -2, player, self.__camera)
             ]
