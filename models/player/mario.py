@@ -113,7 +113,7 @@ class Mario(pg.sprite.Sprite):
 
     def __apply_gravity(self):
         self.rect.y += self.vy
-        self.vy += 1
+        self.vy += self.gc.gravity
 
     def __handle_horizontal_movement(self, keys):
         if keys[pg.K_RIGHT]:

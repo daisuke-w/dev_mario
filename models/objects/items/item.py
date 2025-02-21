@@ -25,7 +25,7 @@ class Item(pg.sprite.Sprite):
 
     def apply_gravity(self):
         self.rect.y += self.vy
-        self.vy += 1
+        self.vy += self.gc.gravity
 
     def is_falling(self):
         return self.vy > 0
