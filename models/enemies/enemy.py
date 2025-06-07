@@ -1,5 +1,7 @@
 import pygame as pg
 
+import utils.collision as col
+
 from configs.config_manager import ConfigManager as cm
 from utils.status import PlayerStatus as ps
 
@@ -10,8 +12,10 @@ class Enemy(pg.sprite.Sprite):
         super().__init__()
         self.dc = cm.get_display()
         self.gc = cm.get_game()
+        self.bt = cm.get_block().types
 
         self.vx = initial_vx                            # 横方向の速度
+        self.vy = 0
         self.facing_left = True                         # 左向きかどうか
         self.frame_counter = 0                          # フレームカウンター
         self.stomped = False                            # 踏まれたかどうか
@@ -20,6 +24,8 @@ class Enemy(pg.sprite.Sprite):
         self.disappear_delay = self.gc.disappear_delay  # 踏まれた後消えるまでの時間（フレーム数）
         self.player = player                            # プレイヤーの参照を保持
         self.camera = camera                            # カメラの参照を保持
+        self.on_ground = False                          # 地面にいるかどうか
+        self.on_block = False                           # ブロックの上にいるかどうか
 
         # 画像をリストで保持
         self.imgs = images
@@ -45,14 +51,42 @@ class Enemy(pg.sprite.Sprite):
             }
 
     def check_screen_boundaries(self):
-        # ✅ カメラから表示範囲（ビューポート）を取得
+        # カメラから表示範囲（ビューポート）を取得
         viewport_left, viewport_right = self.camera.get_viewport_bounds()
 
         # ビューポートの境界で反転
         if self.rect.left <= viewport_left or self.rect.right >= viewport_right:
             self.reverse_direction()
 
+    def apply_gravity(self):
+        self.rect.y += self.vy
+        self.vy += self.gc.gravity
+
     def update_common(self):
+        result, block_type = col.is_touching_block_below(self, self.dc.tile_size)
+
+        # if result:
+        #     if self.bt.ground == block_type:
+        #         self.on_ground = True
+        #     else:
+        #         self.on_block = True
+        # else:
+        #     self.on_ground = False
+        #     self.on_block = False
+
+        if not result:
+            self.apply_gravity()
+        # 地面に着地した場合
+        elif self.rect.y > 220:
+            self.vy = 0
+            self.rect.y = 220
+            self.on_ground = True
+        # ブロックに着地した場合
+        elif self.on_block:
+            self.vy = 0
+            # ブロックの上にいるが、地面ではない
+            self.on_ground = False
+
         # 踏まれていない場合は横移動
         if not self.is_stomped():
             # X方向に移動

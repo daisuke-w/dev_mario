@@ -4,7 +4,6 @@ import utils.collision as col
 
 from configs.config_manager import ConfigManager as cm
 from utils.debug import debug_log
-from utils.settings import BLOCK_MAP
 from utils.status import PlayerStatus as ps
 
 
@@ -114,7 +113,7 @@ class Mario(pg.sprite.Sprite):
 
     def __apply_gravity(self):
         self.rect.y += self.vy
-        self.vy += 1
+        self.vy += self.gc.gravity
 
     def __handle_horizontal_movement(self, keys):
         if keys[pg.K_RIGHT]:
@@ -184,7 +183,7 @@ class Mario(pg.sprite.Sprite):
                 self.__shrink_frame_counter = 0
 
     def __update_vertical_position(self, value=0):
-        result = col.is_touching_player_block_below(self, self.dc.tile_size, BLOCK_MAP)
+        result, _ = col.is_touching_block_below(self, self.dc.tile_size)
         if not result:
             self.on_ground = False
         if not self.on_ground:
