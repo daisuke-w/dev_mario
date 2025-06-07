@@ -32,7 +32,7 @@ class Kinoko(Item):
         # 出現アニメーション終了後の動作
         if not self.active:
             self.rect.x += self.vx
-            result = col.is_touching_block_below(self, self.dc.tile_size)
+            result, _ = col.is_touching_block_below(self, self.dc.tile_size)
             if not result and not self.on_ground:
                 self.apply_gravity()
                 self.on_block = False

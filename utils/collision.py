@@ -141,7 +141,7 @@ def player_block_collision(group, player, blocks, items):
         handle_block_direction(player, top_block, group, items)
     else:
         # プレイヤーの下に他のブロックがない場合は `leave_block` を呼び出す
-        result = is_touching_block_below(player, gc.tile_size)
+        result, _ = is_touching_block_below(player, gc.tile_size)
         if not result and player.on_block:
             player.leave_block()
 
@@ -217,14 +217,16 @@ def is_touching_block_below(target, tile_size):
     bottom_tile_y = (target.rect.bottom - 1) // tile_size
     left_tile_x = target.rect.left // tile_size
     right_tile_x = (target.rect.right - 1) // tile_size
+    block_type = None
 
     if bottom_tile_y + 1 < len(BLOCK_MAP):
         for x in range(left_tile_x, right_tile_x + 1):
             if 0 <= x < len(BLOCK_MAP[0]):
-                if BLOCK_MAP[bottom_tile_y + 1][x] != 0:
+                block_type = BLOCK_MAP[bottom_tile_y + 1][x]
+                if block_type != 0:
                     block = Block.get_block(x, bottom_tile_y + 1)
                     if not block.is_destroyed:
                         # ブロックが破壊されていない場合
                         if abs(target.rect.bottom - block.rect.top) <= 2:
-                            return True
-    return False
+                            return True, block_type
+    return False, block_type
