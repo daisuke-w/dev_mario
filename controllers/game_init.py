@@ -6,7 +6,7 @@ from models.objects.block import Block
 from models.player.mario import Mario
 from views.camera import Camera
 
-
+// TEST_コメント
 class GameInit:
     def __init__(self, width, height, tile_size, block_map):
         self.__width = width
